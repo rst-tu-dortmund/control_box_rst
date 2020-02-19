@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/numerics/explicit_integrators.proto";
+import "messages/optimal_control/grid_adaptation_strategies.proto";
+
+package corbo.messages;
+
+message MultipleShootingGrid 
+{
+  double dt = 1       [(min_value)=1e-10, (default_value)="0.1"];
+  int32 n = 2         [(min_value)=2, (default_value)="11"];
+
+  int32 num_u_per_interval = 4 [(min_value)=1, (default_value)="1"];
+
+  bool intermediate_x_constraints = 6 [(default_value)="0"];
+
+  ExplicitIntegrator integrator = 10;
+ 
+  bool warm_start = 15;
+}
+
+message MultipleShootingVariableGrid 
+{
+  MultipleShootingGrid multiple_shooting_grid = 1;
+
+  repeated bool xf_fixed = 9  [(dynamic_size)=true, (min_size)=1, (gui_type)=TEXTEDIT];
+  double dt_min = 16 [(default_value)="0"];
+  double dt_max = 17 [(default_value)="inf"];
+  int32 n_min = 22 [(min_value)=2, (default_value)="2"];
+
+  UniformGridAdaptStrategy grid_adapt_strategy = 30;
+  
+}
+
+message NonUniformMultipleShootingVariableGrid 
+{
+  double dt_ref = 1       [(min_value)=1e-10, (default_value)="0.1"];
+  int32 n = 2         [(min_value)=2, (default_value)="11"];
+
+  int32 num_u_per_interval = 5 [(min_value)=1, (default_value)="1"];
+
+
+  bool intermediate_x_constraints = 6 [(default_value)="0"];
+
+  bool dt_eq_constraint = 4;
+
+  ExplicitIntegrator integrator = 10;
+ 
+  bool warm_start = 15;
+
+  repeated bool xf_fixed = 9  [(dynamic_size)=true, (min_size)=1, (gui_type)=TEXTEDIT];
+  double dt_min = 16 [(default_value)="0"];
+  double dt_max = 17 [(default_value)="inf"];
+  int32 n_min = 22 [(min_value)=2, (default_value)="2"];
+
+  NonUniformGridAdaptStrategy grid_adapt_strategy = 30;
+  
+}

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message ExplicitIntegrator
+{
+  oneof explicit_integrator
+  {
+    IntegratorExplicitEuler explicit_euler = 1;
+    IntegratorExplicitRungeKutta2 runge_kutta_2 = 2;
+    IntegratorExplicitRungeKutta3 runge_kutta_3 = 3;
+    IntegratorExplicitRungeKutta4 runge_kutta_4 = 4;
+    IntegratorExplicitRungeKutta5 runge_kutta_5 = 5;
+    IntegratorExplicitRungeKutta6 runge_kutta_6 = 6;
+    IntegratorExplicitRungeKutta7 runge_kutta_7 = 7;
+    IntegratorMultiStageFixedStep multi_stage_fixed_step = 15;
+    IntegratorMultiStageScaled multi_stage_scaled = 16;
+    IntegratorAdaptiveStepSize adaptive_step_size = 25;
+  }
+}
+
+message IntegratorExplicitEuler {}
+message IntegratorExplicitRungeKutta2 {}
+message IntegratorExplicitRungeKutta3 {}
+message IntegratorExplicitRungeKutta4 {}
+message IntegratorExplicitRungeKutta5 {}
+message IntegratorExplicitRungeKutta6 {}
+message IntegratorExplicitRungeKutta7 {}
+message IntegratorMultiStageFixedStep 
+{
+  double inner_integration_dt = 1 [(default_value)="0.1"];
+  ExplicitIntegrator integrator = 2;
+}
+message IntegratorMultiStageScaled
+{
+  int32 n = 1 [(default_value)="2", (min_value)=1];
+  ExplicitIntegrator integrator = 2;
+}
+message IntegratorAdaptiveStepSize 
+{
+  double tol = 1;
+
+  ExplicitIntegrator integrator1 = 2;
+  ExplicitIntegrator integrator2 = 3;
+}
+
+

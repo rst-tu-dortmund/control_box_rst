@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "messages/plants/plant.proto";
+import "messages/controllers/controllers.proto";
+import "messages/observers/observers.proto";
+import "messages/tasks/tasks.proto";
+
+package corbo.messages;
+
+message corboParameters
+{
+  Plant plant = 1;
+  Controller controller = 2;	
+  Observer observer = 3;
+  Task task = 4;
+}
+
+

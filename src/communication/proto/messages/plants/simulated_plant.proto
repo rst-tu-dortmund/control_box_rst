@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/systems/system_dynamics.proto";
+import "messages/systems/output_functions.proto";
+import "messages/plants/disturbance.proto";
+import "messages/numerics/explicit_integrators.proto";
+
+package corbo.messages;
+
+
+message SimulatedPlant
+{
+  repeated double x0 = 1 [(dynamic_size)=true, (min_size)=1, (update_signals)=true];
+
+  SystemDynamics system_dynamics = 2;
+  OutputFunction output_function = 3;
+
+  ExplicitIntegrator integrator = 4 [(collapsed)=true];
+
+  Disturbance input_disturbance = 10 [(collapsed)=true];
+  Disturbance output_disturbance = 11 [(collapsed)=true];
+  Disturbance state_disturbance = 12 [(collapsed)=true];
+}
+
+

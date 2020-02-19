@@ -1,0 +1,79 @@
+# lcov.cmake
+#
+# based on https://github.com/stepcode/stepcode/blob/master/lcov.cmake
+# modified by <christoph.roesmann@tu-dortmund.de>
+#
+# Command:
+# `ctest -S lcov.cmake`
+
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  message(FATAL_ERROR "LCOV is Linux-only")
+endif(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+
+FIND_PROGRAM( GCOV_PATH gcov )
+FIND_PROGRAM( LCOV_PATH lcov )
+FIND_PROGRAM( GENHTML_PATH genhtml )
+if (NOT LCOV_PATH)
+  message(FATAL_ERROR "lcov not found. Please install it first")
+endif (NOT LCOV_PATH)
+
+set(CTEST_SOURCE_DIRECTORY @CMAKE_CURRENT_SOURCE_DIR@)
+set(CTEST_BINARY_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@)
+set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+set(CTEST_PROJECT_NAME "CodeCoverage")
+set(CTEST_MEMORYCHECK_COMMAND /usr/bin/valgrind)
+#set(CTEST_INITIAL_CACHE "
+#SITE:STRING=${CTEST_SITE}
+#BUILDNAME:STRING=${CTEST_BUILD_NAME}
+#SC_ENABLE_TESTING:BOOL=ON
+#SC_ENABLE_COVERAGE:BOOL=ON
+#SC_BUILD_SCHEMAS:STRING=ALL
+#SC_BUILD_TYPE:STRING=Debug
+#")
+
+
+set(CONFIGURE_OPTIONS
+    "-DCMAKE_BUILD_TYPE=Debug"
+    "-DCMAKE_CXX_FLAGS=-fprofile-arcs -ftest-coverage"
+)
+
+set(LCOV_OUT "${CTEST_BINARY_DIRECTORY}/lcov_html")
+
+ctest_start(lcov)
+ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+message("configuring...")
+ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "${CONFIGURE_OPTIONS}")
+message("lcov: resetting counters...")
+execute_process(COMMAND lcov -z -d .
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET)
+
+message("building...")
+ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" CONFIGURATION Debug)
+
+message("running tests...")
+ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 1)
+
+message("analyzing profiling data using lcov...")
+execute_process(COMMAND lcov -c -d . -o cobra.lcov
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET)
+
+message("removing external source files and headers...")
+execute_process(COMMAND lcov -r cobra.lcov "/usr/include/*" "*/extern/* *test*" -o cobra_no_external.lcov
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET)
+# print summary
+execute_process(COMMAND lcov -summary cobra_no_external.lcov WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY})
+# create html output directory
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${LCOV_OUT})
+
+message("creating html files...")
+execute_process(COMMAND genhtml ${CTEST_BINARY_DIRECTORY}/cobra_no_external.lcov
+  WORKING_DIRECTORY ${LCOV_OUT} OUTPUT_QUIET)
+
+message("html files are located in ${LCOV_OUT}")
+
+#execute_process(COMMAND ${CMAKE_COMMAND} -E tar czf ${LCOV_OUT}.tgz ${LCOV_OUT} WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY})
+#message("tarball at ${LCOV_OUT}.tgz")
+
+message("generating coverage report finished.")
+
+

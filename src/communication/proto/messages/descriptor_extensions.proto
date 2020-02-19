@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+package corbo.messages;
+
+enum GuiType 
+{
+  TEXTEDIT = 0;
+  SLIDER = 1;
+  CHECKBOX = 2;
+  COMBOBOX = 3;
+  RADIO = 4;
+  PUSHBUTTON = 5;
+}
+
+extend google.protobuf.FieldOptions
+{
+  string default_value = 5000;
+  double min_value = 5001;
+  double max_value = 5002;
+  
+  bool dynamic_size = 5025;
+  int32 min_size = 5026;
+  int32 max_size = 5027;
+
+  string description = 5050;
+
+  bool info = 5075;
+
+  // Preferences for GUI style
+  string label = 5100;
+  GuiType gui_type = 5101;
+  bool collapsed = 5102;
+  bool update_signals = 5105;
+  // if print_description is false, only the tooltip contains the description
+  bool print_description = 5106;
+}
+
+extend google.protobuf.MessageOptions 
+{
+  string msg_description = 50000;
+}

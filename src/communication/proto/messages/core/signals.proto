@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "messages/core/matrix.proto";
+import "messages/core/time_series.proto";
+import "messages/core/time_series_sequence.proto";
+
+package corbo.messages;
+
+
+message SignalHeader
+{
+   string name = 1;
+   double time = 2;
+   int32 value_dimension = 3;
+   bool zero_order_hold = 4;
+}
+
+message Signal
+{
+   SignalHeader header = 1;
+
+   oneof signal
+   {
+      TimeSeries time_series = 2;
+      Measurement measurement = 3;
+      Vector values = 4;
+      TimeSeriesSequence ts_sequence = 5;
+      IndexedValues indexed_values = 6;
+      IndexedValuesSet indexed_values_set = 7;
+      Matrix matrix = 8;
+      MatrixSet matrix_set = 9;
+   }
+}
+
+
+// simple signals
+message Vector
+{
+    repeated double values = 1;
+}
+
+message Measurement
+{
+   double time = 1;
+   repeated double values = 2;
+   repeated string value_labels = 3;
+}
+
+message IndexedValues
+{
+  int32 index = 1;
+  repeated double values = 2;
+}
+
+message IndexedValuesSet
+{
+  map<int32, Vector> indexed_values = 1;
+}
+
+message MatrixSet
+{
+  repeated Matrix matrices = 1;
+}
+
+message SignalContainer
+{
+   map<string, Signal> signals_map = 2;  
+}
+
+
+

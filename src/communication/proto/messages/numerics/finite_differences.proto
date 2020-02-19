@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+// import "messages/observers/todo.proto";
+
+package corbo.messages;
+
+message FiniteDifferences
+{
+  oneof finite_differences
+  {
+    ForwardDifferences forward_differences = 1;
+    CentralDifferences central_differences = 2;
+  }
+}
+
+message ForwardDifferences {}
+message CentralDifferences {}
+
+

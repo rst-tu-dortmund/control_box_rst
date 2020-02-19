@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package corbo.messages;
+
+import "messages/descriptor_extensions.proto";
+import "messages/tasks/open_loop_control_task.proto";
+import "messages/tasks/closed_loop_control_task.proto";
+
+// Parameter for the ClosedLoopControlTask
+message BenchmarkTaskIncreasingHorizonOpenLoop
+{
+  int32 n_start = 1 [(default_value)="2"];
+  int32 n_end = 2 [(default_value)="50"];
+  int32 n_step = 3 [(default_value)="1"];
+
+  double repetitions = 10 [(default_value)="1"];
+
+  int32 shooting_num_u_per_interval = 11 [(default_value)="1", (description)="In case of shooting nodes, specify the desired number of controls per interval"];
+  double initial_tf = 12 [(default_value)="-1"];
+
+  double wait_time = 15;
+  bool publish_task_signals = 16;
+
+  OpenLoopControlTask open_loop_control_task = 20;
+}
+
+
+message BenchmarkTaskVaryingInitialState
+{
+  oneof main_task
+  {
+      ClosedLoopControlTask closed_loop_control_task = 1;
+      OpenLoopControlTask open_loop_control_task = 2;
+  }
+
+ double x01_start = 10;
+ double x01_end = 11;
+ int32 x01_n = 12 [(default_value)="1"];
+
+ double x02_start = 20;
+ double x02_end = 21;
+ int32 x02_n = 22 [(default_value)="1"]; 
+
+ repeated double x0_default = 30 [(dynamic_size)=true, (min_size)=1, (update_signals)=true];
+
+ double wait_time = 15;
+}
+

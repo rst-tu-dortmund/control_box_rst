@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message SolverOsqp
+{  
+  int32 max_iter = 1 		[(default_value)="4000", (description)="maximum iterations"];
+  double eps_abs = 2 		[(default_value)="1e-3", (description)="absolute convergence tolerance"];
+  double eps_rel = 3 		[(default_value)="1e-3", (description)="relative convergence tolerance"];
+  double eps_prim_inf = 4 	[(default_value)="1e-4", (description)="primal infeasibility tolerance"];
+  double eps_dual_inf = 5 	[(default_value)="1e-4", (description)="dual infeasibility tolerance"];
+  double alpha = 6 		[(default_value)="1.6", (description)="relaxation parameter"];
+  bool verbose = 7 		[(default_value)="0", (description)="enable printing progress"];
+  bool scaled_termination = 8 	[(default_value)="0", (description)="use scaled termination criteria"];
+  bool check_termination = 9 	[(default_value)="25", (description)="check termination interval [0: disable]"];
+  bool warm_start = 10 		[(default_value)="1"];
+  double time_limit = 11 	[(default_value)="0", (description)="maximum seconds allowed to solve the problem [0: disabled]"];
+
+  double rho = 15 		[(default_value)="0.1", (description)="ADMM step rho"];
+  double sigma = 16 		[(default_value)="1e-6", (description)="ADMM step sigma"];
+  int32 scaling = 17     	[(default_value)="10", (description)="Heuristic data scaling iterations [0: disabled]"];
+  bool adaptive_rho = 18 	[(default_value)="1", (description)="Is rho step size adaptive?"];
+
+  double delta = 20 		[(default_value)="1e-6", (description)="Regularization parameter for polish"];
+  bool polish = 21 		[(default_value)="0", (description)="polish ADMM solution"];
+  int32 polish_refine_iter = 22	[(default_value)="3", (description)="iterative refinement steps in polish"];
+
+
+  enum LinearSolver
+  {
+    QDLDL = 0;
+    MKL_PARADISO = 1;
+  }
+  LinearSolver linear_solver = 30;
+
+}
+
+

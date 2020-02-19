@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/core/reference_trajectories.proto";
+import "messages/systems/one_step_predictor.proto";
+import "messages/systems/filters.proto";
+
+package corbo.messages;
+
+// Parameter for the ClosedLoopControlTask
+message ClosedLoopControlTask
+{
+  ReferenceTrajectory xreference = 1;
+  ReferenceTrajectory ureference = 2;
+  double sim_time = 3 [(default_value)="10"];
+  double dt = 4 [(min_value)=-1, (default_value) ="0.01"];
+
+  bool realtime_sync = 10;
+  bool use_wall_time = 11;
+
+  bool compensate_cpu_time = 12;
+  bool compensate_dead_time = 13;
+
+  double computation_delay = 19 [(description)="Delay of CPU time to compensate. [0: disable, >0: fixed cpu time, -1: inherit and filter from last cpu time]", (update_signals)=true];
+  OneStepPredictor compensator = 20 [(collapsed)=true];
+  Filter computation_delay_filter = 21 [(collapsed)=true];
+
+  double min_dt = 30;
+  double max_dt = 31 [(default_value)="inf"];
+}
+
+

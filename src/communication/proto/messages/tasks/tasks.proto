@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+// import "messages/descriptor_extensions.proto";
+import "messages/tasks/closed_loop_control_task.proto";
+import "messages/tasks/open_loop_control_task.proto";
+import "messages/tasks/benchmark_tasks.proto";
+import "custom_messages/custom_task.proto";
+
+package corbo.messages;
+
+
+// Composition of supported tasks
+message Task 
+{
+
+  oneof task
+  {
+    ClosedLoopControlTask closed_loop_control_task = 1;
+    OpenLoopControlTask open_loop_control_task = 2;
+    BenchmarkTaskIncreasingHorizonOpenLoop benchmark_increasing_n_open_loop = 30;
+    BenchmarkTaskVaryingInitialState benchmark_varying_initial_state = 41;
+    corbocustom.messages.Task custom_task = 101;
+  }
+}
+
+

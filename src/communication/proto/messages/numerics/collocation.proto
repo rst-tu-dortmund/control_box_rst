@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "messages/numerics/quadrature.proto";
+
+
+package corbo.messages;
+
+message Collocation
+{
+  oneof collocation
+  {
+    Quadrature quadrature = 20;
+  }
+}

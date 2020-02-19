@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message LevenbergMarquardtSparse
+{
+  int32 iterations = 1            [(min_value)=1, (default_value)="50"];
+  double weight_eq = 2            [(min_value)=0, (default_value)="2"];
+  double weight_ineq = 3          [(min_value)=0, (default_value)="2"];
+  double weight_bounds = 4        [(min_value)=0, (default_value)="2"];
+
+  double weight_eq_factor = 5     [(min_value)=1, (default_value)="2"];
+  double weight_ineq_factor = 6   [(min_value)=1, (default_value)="2"];
+  double weight_bounds_factor = 7 [(min_value)=1, (default_value)="2"];
+
+  double weight_eq_max = 8        [(min_value)=0, (default_value)="500"];
+  double weight_ineq_max = 9      [(min_value)=0, (default_value)="500"];
+  double weight_bounds_max = 10   [(min_value)=0, (default_value)="500"];
+}
+
+

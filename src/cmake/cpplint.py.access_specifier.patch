@@ -1,0 +1,13 @@
+Index: cpplint.py
+===================================================================
+--- cpplint.py	(revision 139)
++++ cpplint.py	(working copy)
+@@ -4251,7 +4251,7 @@
+   # if(match($0, " <<")) complain = 0;
+   # if(match(prev, " +for \\(")) complain = 0;
+   # if(prevodd && match(prevprev, " +for \\(")) complain = 0;
+-  scope_or_label_pattern = r'\s*\w+\s*:\s*\\?$'
++  scope_or_label_pattern = r'\s*\w+\s*\w*:\s*\\?$'
+   classinfo = nesting_state.InnermostClass()
+   initial_spaces = 0
+   cleansed_line = clean_lines.elided[linenum]

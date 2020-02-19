@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/optimization/solver_levenberg_marquardt_dense.proto";
+import "messages/optimization/solver_levenberg_marquardt_sparse.proto";
+import "messages/optimization/nlp_solver_ipopt.proto";
+
+package corbo.messages;
+
+message NlpSolver 
+{
+  oneof solver
+  {
+    LevenbergMarquardtDense  levenberg_marquardt_dense = 1;
+    LevenbergMarquardtSparse levenberg_marquardt_sparse = 2;
+    SolverIpopt 	     solver_ipopt = 3;
+  }
+}
+
+

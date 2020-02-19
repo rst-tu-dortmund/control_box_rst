@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/numerics/finite_differences_collocation.proto";
+import "messages/optimal_control/grid_adaptation_strategies.proto";
+
+package corbo.messages;
+
+message FiniteDifferencesGrid 
+{
+  double dt = 1 [(min_value)=1e-10, (default_value)="0.1"];
+  int32 n = 2   [(min_value)=2, (default_value)="11"];
+
+  FiniteDifferencesCollocation fd_collocation = 10;
+
+  enum CostIntegrationRule
+  {
+    LeftSum = 0;
+    TrapezoidalRule = 1;
+  }
+  CostIntegrationRule cost_integration_rule = 12;
+
+
+  bool warm_start = 15;
+}
+
+message FiniteDifferencesGridMoveBlocking
+{
+  double dt = 1 [(min_value)=1e-10, (default_value)="0.1"];
+  int32 n = 2   [(min_value)=2, (default_value)="11"];
+
+  repeated int32 B = 9 [(dynamic_size)=true, (min_size)=1, (min_value)=1, (description)="Blocking Matrix"];
+
+  FiniteDifferencesCollocation fd_collocation = 10;
+
+  enum CostIntegrationRule
+  {
+    LeftSum = 0;
+    TrapezoidalRule = 1;
+  }
+  CostIntegrationRule cost_integration_rule = 12;
+
+
+  bool warm_start = 15;
+  bool warm_start_shift_u = 16;
+}
+
+message FiniteDifferencesVariableGrid 
+{
+  FiniteDifferencesGrid finite_differences_grid = 1;
+  
+  repeated bool xf_fixed = 9  [(dynamic_size)=true, (min_size)=1, (gui_type)=TEXTEDIT];
+  double dt_min = 16 [(default_value)="0"];
+  double dt_max = 17 [(default_value)="inf"];
+  int32 n_min = 22 [(min_value)=2, (default_value)="2"];
+
+  UniformGridAdaptStrategy grid_adapt_strategy = 30;
+}
+
+
+message NonUniformFiniteDifferencesVariableGrid 
+{
+  double dt_ref = 1 [(min_value)=1e-10, (default_value)="0.1"];
+  int32 n = 2       [(min_value)=2, (default_value)="11"];
+
+  repeated bool xf_fixed = 9  [(dynamic_size)=true, (min_size)=1, (gui_type)=TEXTEDIT];
+  double dt_min = 16 [(default_value)="0"];
+  double dt_max = 17 [(default_value)="inf"];
+  int32 n_min = 22 [(min_value)=2, (default_value)="2"];
+
+  bool dt_eq_constraint = 3;
+
+  bool warm_start = 15;
+
+  enum CostIntegrationRule
+  {
+    LeftSum = 0;
+    TrapezoidalRule = 1;
+  }
+  CostIntegrationRule cost_integration_rule = 12;
+
+  FiniteDifferencesCollocation fd_collocation = 25;
+
+  NonUniformGridAdaptStrategy grid_adapt_strategy = 30;
+}

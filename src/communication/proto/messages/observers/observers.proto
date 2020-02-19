@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+// import "messages/observers/todo.proto";
+import "custom_messages/custom_observer.proto";
+
+package corbo.messages;
+
+message Observer
+{
+  oneof observer
+  {
+    NoObserver no_observer = 1;
+    corbocustom.messages.Observer custom_observer = 101;
+  }
+}
+
+message NoObserver {}
+
+

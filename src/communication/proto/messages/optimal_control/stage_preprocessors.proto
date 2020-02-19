@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/common_messages.proto";
+import "custom_messages/custom_stage_preprocessors.proto";
+
+package corbo.messages;
+
+message StagePreprocessors
+{
+  oneof stage_preprocessors
+  {
+    Void no_function = 1;
+    corbocustom.messages.StagePreprocessors custom_stage_preprocessor = 101;
+  }
+}

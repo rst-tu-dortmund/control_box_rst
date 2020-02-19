@@ -1,0 +1,179 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/common_messages.proto";
+import "messages/systems/system_dynamics.proto";
+import "custom_messages/custom_stage_cost.proto";
+import "custom_messages/custom_final_stage_cost.proto";
+import "custom_messages/custom_stage_equalities.proto";
+import "custom_messages/custom_stage_inequalities.proto";
+import "custom_messages/custom_final_stage_constraints.proto";
+
+package corbo.messages;
+
+// ====== StageCost ======
+
+message StageCost 
+{
+  oneof stage_cost
+  {
+    Void no_function = 1;
+    QuadraticFormCost quadratic_form_cost = 2;
+    QuadraticStateCost quadratic_state_cost = 3;
+    QuadraticControlCost quadratic_control_cost = 4;
+    MinimumTime minimum_time = 10;
+    MinimumTimeRegularized minimum_time_regularized = 12;
+
+    MinTimeQuadraticGainScheduled min_time_quad_form_gain_scheduled = 20;
+    MinTimeQuadratic min_time_quad_form = 21;
+
+    corbocustom.messages.StageCost custom_stage_cost = 101;
+  }
+}
+
+message QuadraticFormCost
+{
+  repeated double Q = 9    [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="State error weight"];
+  repeated double R = 10   [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="Control input error weight"];
+  bool Q_diagonal_only = 11 [(default_value)="1"];
+  bool R_diagonal_only = 12 [(default_value)="1"];
+  bool lsq_form = 15;
+  bool integral_form = 20 [(default_value)="1"];
+}
+
+message QuadraticStateCost
+{
+  repeated double Q = 9    [(dynamic_size)=true, (min_size)=1, (description)="State error weight"];
+  bool diagonal_only = 10 [(default_value)="1"];
+  bool lsq_form = 15;
+  bool integral_form = 20 [(default_value)="1"];
+
+}
+
+message QuadraticControlCost
+{
+  repeated double R = 9    [(dynamic_size)=true, (min_size)=1, (description)="Control input error weight"];
+  bool diagonal_only = 10 [(default_value)="1"];
+  bool lsq_form = 15;
+  bool integral_form = 20 [(default_value)="1"];
+
+}
+
+message MinimumTime
+{
+  bool lsq_form = 1;
+}
+
+message MinimumTimeRegularized
+{
+  double reg_factor = 1;
+}
+
+
+message MinTimeQuadraticGainScheduled
+{
+  MinimumTime minimum_time = 1;
+  QuadraticFormCost quadratic_form = 2;
+  double scale = 5;
+}
+
+message MinTimeQuadratic
+{
+  MinimumTime minimum_time = 1;
+  QuadraticFormCost quadratic_form = 2;
+  int32 only_last_n = 5;
+}
+
+// ====== FinalStageCost ======
+
+message FinalStageCost 
+{
+  oneof final_stage_cost
+  {
+    Void 		   	    no_function = 1;
+    QuadraticFinalStateCost 	    quadratic_state_cost = 2;
+    QuadraticFinalStateCostRiccati  quadratic_state_cost_riccati = 3;
+
+    corbocustom.messages.FinalStageCost custom_final_stage_cost = 101;
+  }
+}
+
+message QuadraticFinalStateCost
+{
+  repeated double Qf = 9    [(dynamic_size)=true, (min_size)=1, (description)="State error weight"];
+  bool diagonal_only = 10 [(default_value)="1"];
+  bool lsq_form = 15;
+}
+
+message QuadraticFinalStateCostRiccati
+{
+  repeated double Q = 1    [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="State error weight"];
+  repeated double R = 2   [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="Control input error weight"];
+  bool Q_diagonal_only = 5 [(default_value)="1"];
+  bool R_diagonal_only = 6 [(default_value)="1"];
+  SystemDynamics system_dynamics = 10;
+  bool lsq_form = 15;
+}
+
+
+// ====== StageEqualities ======
+
+message StageEqualities 
+{
+  oneof stage_equalities
+  {
+    Void no_function = 1;
+    corbocustom.messages.StageEqualities custom_stage_equalities = 101;
+  }
+}
+
+// ====== StageInequalities ======
+
+message StageInequalities 
+{
+  oneof stage_inequalities
+  {
+    Void no_function = 1;
+    corbocustom.messages.StageInequalities custom_stage_inequalities = 101;
+  }
+}
+
+// ====== FinalStateConstraints ======
+
+message FinalStageConstraints 
+{
+  oneof final_stage_constraints
+  {
+    Void no_function = 1;
+    TerminalBall terminal_ball = 2;
+    TerminalBallInheritFromCost terminal_ball_from_cost = 3;
+    TerminalEqualityConstraint terminal_equality_constraint = 4;
+    TerminalPartialEqualityConstraint terminal_partial_eq_constr = 5;
+    corbocustom.messages.FinalStageConstraints custom_final_stage_constraints = 101;
+  }
+}
+
+message TerminalBall
+{
+  repeated double S = 1    [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="Weighted state distance"];
+  double gamma = 2         [(min_value)=0];
+  bool S_diagonal_only = 10 [(default_value)="1"];
+}
+
+message TerminalBallInheritFromCost
+{
+  double gamma = 1         [(min_value)=0];
+}
+
+message TerminalEqualityConstraint
+{
+  repeated double x_ref = 1   [(dynamic_size)=true];
+}
+
+message TerminalPartialEqualityConstraint
+{
+  repeated double x_ref = 1   [(dynamic_size)=true];
+  repeated bool active_components = 9  [(dynamic_size)=true, (min_size)=1, (gui_type)=TEXTEDIT];
+}
+
+

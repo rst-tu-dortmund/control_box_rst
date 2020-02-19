@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// import "messages/observers/todo.proto";
+
+package corbo.messages;
+
+message Quadrature
+{
+  oneof quadrature
+  {
+    QuadratureRectangleRule rectangle_rule = 1;
+    QuadratureTrapezoidalRule trapezoidal_rule = 2;
+    QuadratureHermiteSimpsonLinearControl hermite_simpson_linear_u = 3;
+    QuadratureHermiteSimpson hermite_simpson = 4;
+  }
+}
+
+message QuadratureRectangleRule {}
+message QuadratureTrapezoidalRule {}
+message QuadratureHermiteSimpsonLinearControl {}
+message QuadratureHermiteSimpson {}

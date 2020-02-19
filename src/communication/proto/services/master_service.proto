@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+import "messages/common_messages.proto";
+import "messages/core/signals.proto";
+import "messages/plants/plant.proto";
+import "messages/controllers/controllers.proto";
+import "messages/observers/observers.proto";
+import "messages/tasks/tasks.proto";
+
+package corbo.services;
+
+// Master Service
+service MasterService
+{
+  // Plant services
+  rpc setPlant (corbo.messages.Plant) returns (corbo.messages.Status) {}
+  rpc getPlant (corbo.messages.Void) returns (corbo.messages.Plant) {}
+
+  // Controller services
+  rpc setController (corbo.messages.Controller) returns (corbo.messages.Status) {}
+  rpc getController (corbo.messages.Void) returns (corbo.messages.Controller) {}
+
+  // Observer services
+  rpc setObserver (corbo.messages.Observer) returns (corbo.messages.Status) {}
+  rpc getObserver (corbo.messages.Void) returns (corbo.messages.Observer) {}
+
+  // Task services
+  rpc setTask (corbo.messages.Task) returns (corbo.messages.Status) {}
+  rpc getTask (corbo.messages.Void) returns (corbo.messages.Task) {}
+  rpc getAvailableSignals (corbo.messages.Void) returns (stream corbo.messages.Signal) {}
+  rpc performTask(corbo.messages.Void) returns (stream corbo.messages.Signal) {}
+
+  rpc verifyConfig(corbo.messages.Void) returns (corbo.messages.Status) {}
+
+  rpc ping(corbo.messages.Void) returns (corbo.messages.Status) {}
+  rpc stop(corbo.messages.Void) returns (corbo.messages.Void) {}
+}
+
+
+//message TaskResponse
+//{
+//   corbo.messages.Status status = 1;
+//   corbo.messages.SignalContainer signals_container = 2;
+//}
+

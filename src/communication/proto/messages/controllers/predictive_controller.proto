@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/optimal_control/optimal_control_problem.proto";
+
+package corbo.messages;
+
+message PredictiveController 
+{
+       int32 num_ocp_iterations = 1 [(min_value)=1, (default_value)="1"];
+       OptimalControlProblem optimal_control_problem = 2;
+  
+       bool auto_update_prev_control = 10 [(default_value)="1"];
+       bool publish_prediction = 15 [(update_signals)=true, (default_value)="1"];
+}

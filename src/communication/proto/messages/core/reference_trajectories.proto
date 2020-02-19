@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/core/time_series.proto";
+
+package corbo.messages;
+
+
+// Composition of supported reference trajectories
+message ReferenceTrajectory 
+{
+
+  oneof reference
+  {
+    ZeroReference zero_reference = 1;
+    StaticReference static_reference = 2;
+    SineReferenceTrajectory sine_reference_trajectory = 3;
+    DiscreteTimeReferenceTrajectory discrete_time_reference = 10;
+    BlindDiscreteTimeReferenceTrajectory blind_discrete_time_reference = 11;
+  }
+}
+
+message ZeroReference 
+{
+   int32 dimension = 1 [(min_value)=0, (default_value)="1"];
+}
+
+message StaticReference
+{
+    repeated double xf = 1 [(dynamic_size)=true];
+}
+
+message SineReferenceTrajectory
+{
+    double amplitude = 1 [(default_value)="1"];
+    double omega = 2 [(min_value)=0, (default_value)="1"];
+    double offset = 3 [(default_value)="0"];
+}
+
+message DiscreteTimeReferenceTrajectory
+{
+    TimeSeries time_series = 1;
+    enum Interpolation
+    {
+	ZERO_ORDER = 0;
+	LINEAR = 1;
+    }
+    Interpolation interpolation = 2;
+}
+
+message BlindDiscreteTimeReferenceTrajectory
+{
+    TimeSeries time_series = 1;
+    enum Interpolation
+    {
+	ZERO_ORDER = 0;
+	LINEAR = 1;
+    }
+    Interpolation interpolation = 2;
+}
+

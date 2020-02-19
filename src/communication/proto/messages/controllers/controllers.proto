@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/controllers/pid_controller.proto";
+import "messages/controllers/lqr_controller.proto";
+import "messages/controllers/simple_state_controller.proto";
+import "messages/controllers/predictive_controller.proto";
+import "messages/controllers/step_response_generator.proto";
+import "custom_messages/custom_controller.proto";
+
+package corbo.messages;
+
+message Controller
+{
+  oneof controller
+  {
+    PidController pid_controller = 1;
+    LqrController lqr_controller = 2;
+    PredictiveController predictive_controller = 3;
+    SimpleStateController simple_state_controller = 4;
+    DualModeController dual_mode_controller = 5;
+    StepResponseGenerator step_response_generator = 100;
+    corbocustom.messages.Controller custom_controller = 101;
+  }
+}
+
+message DualModeController 
+{
+  Controller local_controller = 1;
+  PredictiveController predictive_controller = 2;
+
+  
+  bool switch_terminal_ball = 5;
+  repeated double ball_S = 10      [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="Weighted state distance"];
+  double ball_gamma = 11           [(min_value)=0];
+  bool ball_S_diagonal_only = 12  [(default_value)="1"];
+
+  bool switch_dt = 20;
+  double min_dt = 21;
+
+}
+

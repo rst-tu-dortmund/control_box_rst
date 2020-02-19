@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package corbo.messages;
+
+import "messages/descriptor_extensions.proto";
+import "messages/core/reference_trajectories.proto";
+
+// Parameter for the ClosedLoopControlTask
+message OpenLoopControlTask
+{
+  ReferenceTrajectory xreference = 1;
+  ReferenceTrajectory ureference = 2;
+  double dt = 3 [(min_value)=-1, (default_value)="0.01"];
+
+  bool realtime_sync = 10;
+}
+
+

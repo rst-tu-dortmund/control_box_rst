@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package corbo.messages;
+
+message FiniteDifferencesCollocation
+{
+  oneof fd_collocation
+  {
+    ForwardDiffCollocation forward_differences = 1;
+    BackwardDiffCollocation backward_differences = 2;
+    MidpointDiffCollocation midpoint_differences = 3;
+    CrankNicolsonDiffCollocation crank_nicolson = 4;
+  }
+}
+
+
+message ForwardDiffCollocation {}
+message BackwardDiffCollocation {}
+message MidpointDiffCollocation {}
+message CrankNicolsonDiffCollocation {}
+
+
+

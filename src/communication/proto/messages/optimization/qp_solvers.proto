@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/optimization/qp_solver_osqp.proto";
+
+package corbo.messages;
+
+message QpSolver 
+{
+  oneof solver
+  {
+    SolverOsqp  solver_osqp = 1;
+  }
+}
+
+

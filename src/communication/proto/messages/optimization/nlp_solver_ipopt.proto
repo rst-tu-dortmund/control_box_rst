@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message SolverIpopt
+{
+
+  int32 iterations = 1              [(min_value)=1, (default_value)="50"];
+
+  enum LinearSolver
+  {
+    MUMPS = 0;
+    MA27 = 1;
+    MA57 = 2;
+    MA77 = 3;
+    MA86 = 4;
+    MA97 = 5;
+  }
+  LinearSolver linear_solver = 5;
+
+  double rel_tolerance = 10          [(min_value)=0, (default_value)="0.001"];
+  bool adaptive_mu_strategy = 11;
+  bool exact_hessian_approx = 12;
+  bool mehrotra_algorithm = 13;
+  bool warm_start_init_point = 14;
+  bool nlp_auto_scaling = 15 [(default_value)="1"];
+  bool cache_first_order_derivatives = 20;
+  int32 print_level = 16             [(min_value)=0, (max_value)=5, (default_value)="2"];
+  double max_cpu_time = 17          [(min_value)=0, (default_value)="0"];
+
+  bool check_derivatives_for_naninf = 30;
+  bool derivative_test_first_order = 31;
+  bool derivative_test_second_order = 32;
+  
+}
+
+

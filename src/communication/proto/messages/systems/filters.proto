@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/common_messages.proto";
+
+package corbo.messages;
+
+message Filter
+{
+  oneof filter
+  {
+    Void no_filter = 1;
+    MovingAverageFilter moving_average = 2;
+    MovingMedianFilter moving_median   = 3;
+    MovingLeastSquaresFilter moving_least_squares = 4;
+  }
+}
+
+
+message MovingAverageFilter
+{
+  int32 window_size = 1;
+}
+
+message MovingMedianFilter
+{
+  int32 window_size = 1;
+}
+
+message MovingLeastSquaresFilter
+{
+  int32 window_size = 1;
+  int32 polynom_order = 2;
+}

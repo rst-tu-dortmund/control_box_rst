@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "messages/core/time_series.proto";
+
+package corbo.messages;
+
+
+
+message TimeSeriesSequence 
+{
+  int32 value_dimension = 1;
+
+  repeated TimeSeries ts_sequence = 2;
+}
+
+

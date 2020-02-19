@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "messages/optimal_control/structured_optimal_control_problem.proto";
+
+
+package corbo.messages;
+
+message OptimalControlProblem
+{
+  oneof optimal_control_problem
+  {
+    StructuredOptimalControlProblem structured_optimal_control_problem = 1;
+  }
+}
+
+

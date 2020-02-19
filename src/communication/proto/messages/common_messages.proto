@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package corbo.messages;
+
+message String
+{
+  string text = 1;
+}
+
+message Status
+{
+  bool ok = 1;
+  string text = 2;
+}
+
+message Void {}

@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/numerics/finite_differences.proto";
+import "custom_messages/custom_system_dynamics.proto";
+
+package corbo.messages;
+
+message SystemDynamics
+{
+  oneof system_dynamics
+  {
+    SerialIntegratorSystem serial_integrators = 1;
+    ParallelIntegratorSystem parallel_integrators = 2;
+    LinearStateSpaceModel linear_state_space = 3;
+    VanDerPolOscillator van_der_pol_oscillator = 4;
+    DuffingOscillator duffing_oscillator = 5;
+    FreeSpaceRocket free_space_rocket = 6;
+    SimplePendulum simple_pendulum = 7;
+    MasslessPendulum massless_pendulum = 8;
+    CartPole cart_pole = 9;
+    ToyExample toy_example = 10;
+    ArtsteinsCircle artsteins_circle = 11;
+    DoubleIntegratorDiscreteTime double_integrator_discrete_time = 50;
+    corbocustom.messages.SystemDynamics custom_system_dynamics = 101;
+  }
+
+  double deadtime = 99 [(min_value)=0];
+  FiniteDifferences linearization_method = 100 [(collapsed)=true];  
+}
+
+message SerialIntegratorSystem 
+{
+  int32 dimension = 1 [(update_signals)=true, (default_value)="1"];
+  double time_constant = 2 [(min_value)=1e-15, (default_value)="1"];
+}
+
+message ParallelIntegratorSystem 
+{
+  int32 dimension = 1 [(update_signals)=true, (default_value)="1"];
+  double time_constant = 2 [(min_value)=1e-15, (default_value)="1"];
+}
+
+message DoubleIntegratorDiscreteTime 
+{
+  double dt = 1 [(default_value)="0.1"];
+}
+
+message LinearStateSpaceModel 
+{
+  repeated double A = 1    [(dynamic_size)=true, (min_size)=1, (description)="System matrix"];
+  repeated double B = 2    [(dynamic_size)=true, (min_size)=1, (description)="Input matrix"];
+}
+
+message VanDerPolOscillator 
+{
+  double a = 1 [(default_value)="1"];
+}
+
+message DuffingOscillator 
+{
+  double damping      = 1 [(default_value)="1"];
+  double spring_alpha = 2 [(default_value)="1"];
+  double spring_beta  = 3 [(default_value)="1"];
+}
+
+message FreeSpaceRocket
+{
+}
+
+message SimplePendulum
+{
+  double m = 1 [(default_value)="0.205"];
+  double l = 2 [(default_value)="0.34"];
+  double g = 3 [(default_value)="9.81"];
+  double rho = 4 [(default_value)="0"];
+}
+
+message MasslessPendulum
+{
+  double omega0 = 1 [(default_value)="1"];
+}
+
+message CartPole
+{
+  double mc = 1 [(default_value)="1.0"];
+  double mp = 2 [(default_value)="0.3"];
+  double l = 3 [(default_value)="0.5"];
+  double g = 4 [(default_value)="9.81"];
+}
+
+// Chen and Allgoewer 2002, Verschueren 2017.
+message ToyExample
+{
+  double mu = 1 [(default_value)="0.5"];
+}
+
+message ArtsteinsCircle
+{
+}

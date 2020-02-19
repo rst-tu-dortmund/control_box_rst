@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>control_box_rst</name>
+  <version>0.0.0</version>
+  <description>control_box_rst ros package</description>
+
+  <maintainer email="christoph.roesmann@tu-dortmund.de">Christoph Rösmann</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="website">http://wiki.ros.org/control_box_rst</url>
+
+  <author email="christoph.roesmann@tu-dortmund.de">Christoph Rösmann</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>eigen3</depend>
+  <depend>coinor-libipopt-dev</depend>
+
+  <export>
+  </export>
+
+</package>

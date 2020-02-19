@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message StepResponseGenerator
+{
+    repeated double u_step = 1 [(dynamic_size)=true, (min_size)=1, (default_value)="0"];
+    int32 state_dim = 2 [(default_value)="1"];
+}

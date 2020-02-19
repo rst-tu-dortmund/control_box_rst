@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/common_messages.proto";
+
+package corbo.messages;
+
+message Disturbance
+{
+  oneof disturbance
+  {
+     Void no_disturbance = 1;
+     DisturbanceGaussianNoise gaussian_noise = 2;
+  }
+}
+
+message DisturbanceGaussianNoise
+{
+  repeated double mean_vec = 1 [(dynamic_size)=true, (min_size)=1];
+  repeated double std_vec = 2 [(dynamic_size)=true, (min_size)=1];
+}
+
+

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/systems/system_dynamics.proto";
+import "messages/numerics/explicit_integrators.proto";
+
+package corbo.messages;
+
+message OneStepPredictor
+{
+  SystemDynamics system_dynamics = 2;
+  ExplicitIntegrator integrator = 3;
+}
+

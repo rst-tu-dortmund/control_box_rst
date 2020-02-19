@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/plants/simulated_plant.proto";
+
+package corbo.messages;
+
+
+message SimulatedPlantThreaded
+{
+  double sim_rate                = 1 [(min_value)=0, (default_value)="100"];
+  SimulatedPlant simulated_plant = 10;
+}
+
+

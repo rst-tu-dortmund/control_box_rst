@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package corbocustom.messages;
+
+message Plant {}

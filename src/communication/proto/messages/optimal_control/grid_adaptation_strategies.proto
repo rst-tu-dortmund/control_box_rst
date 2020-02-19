@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/common_messages.proto";
+
+package corbo.messages;
+
+message UniformGridAdaptStrategy 
+{
+  oneof grid_adapt_strategy
+  {
+     Void no_grid_adapt = 1;
+     UniformGridAdaptTimeBasedSingleStep time_based_single_step = 2;
+     UniformGridAdaptTimeBasedAggressiveEstimate time_based_aggr_estim = 3;
+     UniformGridAdaptSimpleShrinkingHorizon simple_shrinking_horizon = 4;
+  }
+  bool adapt_first_iter = 10;
+}
+
+message UniformGridAdaptSimpleShrinkingHorizon {}
+
+message UniformGridAdaptTimeBasedSingleStep
+{
+  double dt_hyst_ratio = 1 [(default_value)="0.1"];
+  int32 n_max = 14 [(min_value)=2, (default_value)="100"];
+}
+
+message UniformGridAdaptTimeBasedAggressiveEstimate
+{
+  double dt_hyst_ratio = 1 [(default_value)="0.1"];
+  int32 n_max = 14 [(min_value)=2, (default_value)="100"];
+}
+
+message NonUniformGridAdaptStrategy 
+{
+  oneof grid_adapt_strategy
+  {
+     Void no_grid_adapt = 1;
+     NonUniformGridAdaptTimeBasedSingleStep time_based_single_step = 2;
+     NonUniformGridAdaptRedundantControls redundant_controls = 3;
+  }
+  bool adapt_first_iter = 10;
+}
+
+message NonUniformGridAdaptTimeBasedSingleStep
+{
+  double dt_hyst_ratio = 1 [(default_value)="0.1"];
+  int32 n_max = 14 [(min_value)=2, (default_value)="100"];
+}
+
+message NonUniformGridAdaptRedundantControls
+{
+  int32 num_backup = 1 [(default_value)="1"];
+  double epsilon = 5 [(default_value)="0.01"];
+  int32 n_max = 16 [(min_value)=2, (default_value)="100"]; 
+}
+
+
+
+

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/optimal_control/finite_differences_grid.proto";
+import "messages/optimal_control/multiple_shooting_grid.proto";
+
+package corbo.messages;
+
+message DiscretizationGrid 
+{
+  oneof discretization_grid
+  {
+    FiniteDifferencesGrid finite_differences_grid = 1;
+    FiniteDifferencesVariableGrid finite_differences_variable_grid = 2;
+    NonUniformFiniteDifferencesVariableGrid non_uniform_fd_variable_grid = 3;
+    MultipleShootingGrid multiple_shooting_grid = 5;
+    MultipleShootingVariableGrid multiple_shooting_variable_grid = 6;
+    NonUniformMultipleShootingVariableGrid non_uniform_ms_variable_grid = 7;
+
+    FiniteDifferencesGridMoveBlocking finite_differences_grid_move_blocking = 50;
+  }
+}
+
+

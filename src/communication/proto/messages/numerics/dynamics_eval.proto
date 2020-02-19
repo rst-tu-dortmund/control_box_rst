@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "messages/numerics/collocation.proto";
+import "messages/numerics/explicit_integrators.proto";
+
+package corbo.messages;
+
+message DynamicsEval
+{
+  oneof dynamics_eval
+  {
+    Collocation collocation = 1;
+    ExplicitIntegrator integrator = 2;
+  }
+}
+
+
+
+

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+
+package corbo.messages;
+
+message HyperGraphOptimizationProblem 
+{
+  oneof hyper_graph_optimization_problem
+  {
+    HyperGraphOptimizationProblemEdgeBased edge_based = 1;
+    HyperGraphOptimizationProblemVertexBased vertex_based = 2;
+    HyperGraphOptimizationProblemIgnoreStructure ignore_structure = 10;
+  }
+}
+
+message HyperGraphOptimizationProblemEdgeBased {}
+message HyperGraphOptimizationProblemVertexBased {}
+message HyperGraphOptimizationProblemIgnoreStructure {}
+
+

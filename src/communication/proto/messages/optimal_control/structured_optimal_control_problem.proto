@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/systems/system_dynamics.proto";
+import "messages/optimization/nlp_solvers.proto";
+import "messages/optimal_control/discretization_grids.proto";
+import "messages/optimal_control/stage_functions.proto";
+import "messages/optimal_control/stage_preprocessors.proto";
+import "messages/optimization/hyper_graph_optimization_problem.proto";
+
+package corbo.messages;
+
+message StructuredOptimalControlProblem 
+{
+  SystemDynamics      		system_model = 1;
+  DiscretizationGrid  		discretization_grid = 2;
+
+  repeated double 		u_min = 3   [(dynamic_size)=true];
+  repeated double 		u_max = 4   [(dynamic_size)=true];
+  repeated double 		x_min = 5   [(dynamic_size)=true];
+  repeated double 		x_max = 6   [(dynamic_size)=true];
+
+  StageCost 			stage_cost = 10;
+  FinalStageCost		final_stage_cost = 11;
+  StageEqualities		stage_equalities = 12 [(collapsed)=true];
+  StageInequalities  		stage_inequalities = 13 [(collapsed)=true];
+  FinalStageConstraints         final_stage_constraints = 14 [(collapsed)=true];
+  StagePreprocessors            stage_preprocessors = 15 [(collapsed)=true];
+  HyperGraphOptimizationProblem hyper_graph_strategy = 23;
+  NlpSolver              	nlp_solver = 30;
+  
+  bool increase_n_if_infeas = 50;
+}
+
+

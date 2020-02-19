@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "messages/plants/simulated_plant.proto";
+import "messages/plants/simulated_plant_threaded.proto";
+import "custom_messages/custom_plant.proto";
+
+package corbo.messages;
+
+message Plant
+{
+  oneof plant
+  {
+    SimulatedPlant              simulated_plant = 1;
+    SimulatedPlantThreaded      simulated_plant_threaded = 2;
+    corbocustom.messages.Plant  custom_plant = 101;
+  }
+}
+
+

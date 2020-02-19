@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/systems/system_dynamics.proto";
+
+package corbo.messages;
+
+message LqrController 
+{
+  SystemDynamics system_model = 1;
+
+  repeated double Q = 3 [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="State error weight"];
+  repeated double R = 4 [(dynamic_size)=true, (min_size)=1, (min_value)=0, (description)="Control input error weight"];
+  bool Q_diagonal_only = 5 [(default_value)="1"];
+  bool R_diagonal_only = 6 [(default_value)="1"];
+
+  bool publish_error = 10 [(update_signals)=true, (default_value)="1"];
+}
+
+

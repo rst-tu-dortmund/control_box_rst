@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+// import "messages/observers/todo.proto";
+
+package corbo.messages;
+
+message OutputFunction
+{
+  oneof output_function
+  {
+    FullStateSystemOutput full_state_system_output = 1;
+    LastStateSystemOutput last_state_system_output = 2;
+    FirstStateSystemOutput first_state_system_output = 3;
+    LinearStateSystemOutput linear_state_system_output = 4;
+  }
+}
+
+message FullStateSystemOutput {}
+message FirstStateSystemOutput {}
+message LastStateSystemOutput {}
+message LinearStateSystemOutput {}
+

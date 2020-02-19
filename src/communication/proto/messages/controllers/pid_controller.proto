@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+message PidController 
+{
+  double p_gain = 1;
+  double i_gain = 2;
+  double d_gain = 3;
+
+  int32 num_parallel_pid = 5 [(update_signals)=true, (default_value)="1"];
+
+  bool publish_error = 10 [(update_signals)=true, (default_value)="1"];
+}
+
+

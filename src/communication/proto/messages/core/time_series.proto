@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+import "messages/core/matrix.proto";
+
+package corbo.messages;
+
+
+
+message TimeSeries 
+{
+   repeated double time = 1 [(dynamic_size)=true]; // size(time) == values.rows (column-major)
+   Matrix values = 2; // size(values) should correspond to: size(time)*values.cols (column-major)
+   
+   double time_from_start = 3;   
+
+   repeated string value_labels = 10; // size should be empty or values.cols
+}
+
+

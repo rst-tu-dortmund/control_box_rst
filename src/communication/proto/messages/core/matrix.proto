@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "messages/descriptor_extensions.proto";
+
+package corbo.messages;
+
+
+message Matrix 
+{
+  bool row_major = 1; 
+  int32 rows = 2;
+  int32 cols = 3;
+  // row-major access: (i,j) = data[i*cols+j]
+  // column-major access: (i,j) = data[i+rows*j]
+  // size(data) = rows*cols
+  repeated double data = 4 [(dynamic_size)=true];
+
+  string label = 10;
+}
+
+
