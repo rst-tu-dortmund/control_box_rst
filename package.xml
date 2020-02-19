@@ -15,7 +15,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>eigen3</depend>
+  <depend>eigen</depend>
   <depend>coinor-libipopt-dev</depend>
 
   <export>
