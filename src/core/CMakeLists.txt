@@ -2,7 +2,7 @@
 project(corbo-core VERSION 0.1 LANGUAGES CXX)
 
 # Include Eigen
-find_package(Eigen3)
+find_package(Eigen3 QUIET)
 set(EIGEN3_BUILD_INTERFACE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../extern/eigen3)
 set(EIGEN3_INSTALL_INTERFACE_INCLUDE include/control_box_rst/eigen3)
 if (Eigen3_FOUND)
