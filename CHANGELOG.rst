@@ -2,8 +2,8 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.4 (2020-02-21)
+------------------
 * Removed exec_depend on catkin to allow the use of the same release for ros1 and ros2
 * Contributors: Christoph Rösmann
 
