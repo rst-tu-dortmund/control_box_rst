@@ -2,6 +2,11 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed exec_depend on catkin to allow the use of the same release for ros1 and ros2
+* Contributors: Christoph Rösmann
+
 0.0.3 (2020-02-21)
 ------------------
 * Changed build_type to cmake in package.xml according to REP-136
