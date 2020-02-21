@@ -2,8 +2,8 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.3 (2020-02-21)
+------------------
 * Changed build_type to cmake in package.xml according to REP-136
 * Set some optional findPackage cmake scripts to quiet
 * Contributors: Christoph Rösmann
