@@ -17,7 +17,7 @@
   <depend>coinor-libipopt-dev</depend>
 
   <!-- Non-catkin package, see REP-136 -->
-  <exec_depend>catkin</exec_depend>
+  <!--exec_depend>catkin</exec_depend-->
   <buildtool_depend>cmake</buildtool_depend>
   <export>
     <build_type>cmake</build_type>
