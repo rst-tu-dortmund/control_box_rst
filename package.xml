@@ -13,12 +13,15 @@
 
   <author email="christoph.roesmann@tu-dortmund.de">Christoph Rösmann</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-
   <depend>eigen</depend>
   <depend>coinor-libipopt-dev</depend>
 
+  <!-- Non-catkin package, see REP-136 -->
+  <exec_depend>catkin</exec_depend>
+  <buildtool_depend>cmake</buildtool_depend>
   <export>
+    <build_type>cmake</build_type>
+    <rosdoc config="${prefix}/docs/rosdoc.yaml"/>
   </export>
 
 </package>
