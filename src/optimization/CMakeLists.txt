@@ -40,21 +40,25 @@ target_compile_features(corbo_optimization
 # we are currently using the cmake module path in the toplevel cmake directory
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/modules/")
 
-find_package(IPOPT)
+find_package(IPOPT QUIET)
 if(IPOPT_FOUND)
     message(STATUS "IPOPT found.")
     target_compile_definitions(corbo_optimization PUBLIC ${IPOPT_DEFINITIONS} -DIPOPT)
     target_include_directories(corbo_optimization PUBLIC ${IPOPT_INCLUDE_DIRS})
     SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${IPOPT_LINK_FLAGS}" )
     target_link_libraries(corbo_optimization ${IPOPT_LIBRARIES})
+else(IPOPT_FOUND)
+    message(STATUS "IPOPT not found. Solver IPOPT will not be available.")
 endif(IPOPT_FOUND)
 
-find_package(osqp)
+find_package(osqp QUIET)
 if(osqp_FOUND)
     message(STATUS "OSQP found.")
     target_compile_definitions(corbo_optimization PUBLIC -DOSQP)
     set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
     target_link_libraries(corbo_optimization osqp::osqpstatic -ldl)
+else(osqp_FOUND)
+    message(STATUS "OSQP not found. Solver OSQP will not be available.")
 endif(osqp_FOUND)
 
 # Depend on a library that we defined in the top-level file
