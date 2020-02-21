@@ -52,8 +52,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_observers
 	    corbo_observers
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
         add_test(test_observers_test test_observers)
 endif (BUILD_TESTS)

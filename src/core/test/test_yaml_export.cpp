@@ -22,12 +22,16 @@
  *  Authors: Christoph Rösmann
  *********************************************************************/
 
+#ifdef YAML_SUPPORT
+
 #include <corbo-core/macros.h>
 
 #include <corbo-core/signals.h>
 #include <corbo-core/yaml_export.h>
 
 #include "gtest/gtest.h"
+
+
 
 class TestYAMLExport : public testing::Test
 {
@@ -95,3 +99,5 @@ TEST_F(TestYAMLExport, export_matrix_set)
 
     EXPECT_TRUE(yaml_exporter.exportMatrixSetSignal(filename, mat_set_sig));
 }
+
+#endif // YAML_SUPPORT

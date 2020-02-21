@@ -12,6 +12,8 @@ option(BUILD_TESTS "Build unit tests" OFF)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
 # Compile static libraries with Visual Studio
 if(MSVC)
 	include(cmake/msvc_static_runtime.cmake)

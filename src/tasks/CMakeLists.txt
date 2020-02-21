@@ -61,8 +61,8 @@ if (BUILD_TESTS)
 
         target_link_libraries(test_tasks
             corbo_tasks
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
         add_test(test_tasks_test test_tasks)
 endif (BUILD_TESTS)

@@ -3,7 +3,9 @@ project(gtest_builder VERSION 0.1 LANGUAGES C CXX)
 
 if (NOT BUILD_TESTS)
   return()
-endif (NOT BUILD_TESTS)
+endif ()
+
+message(STATUS "Loading external projects gtest and gmock")
 
 # Enable CMake module for external projects
 include(ExternalProject)
@@ -13,8 +15,6 @@ find_package(Threads REQUIRED)
 
 # Find git since we clone gtest from https://github.com/google/googletest
 find_package(Git REQUIRED)
-
-message(STATUS "Loading external projects gtest and gmock")
 
 set(GTESTLIBNAME "${CMAKE_CFG_INTDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
 set(GMOCKLIBNAME "${CMAKE_CFG_INTDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}")
@@ -28,7 +28,7 @@ set(GTEST_CMAKE_CUSTOM_ARGS
 
 # Download and install GoogleTest
 ExternalProject_Add(
-    gtest
+    googletest
     #URL https://github.com/google/googletest/archive/master.zip
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG "release-1.8.1"
@@ -46,20 +46,20 @@ ExternalProject_Add(
     BUILD_BYPRODUCTS "<BINARY_DIR>/googlemock/gtest/${GTESTLIBNAME};<BINARY_DIR>/googlemock/${GMOCKLIBNAME}"
 )
 # Get source and binary directories
-ExternalProject_Get_Property(gtest source_dir binary_dir)
+ExternalProject_Get_Property(googletest source_dir binary_dir)
 
 # Get GTest source and binary directories from CMake project
-add_library(libgtest INTERFACE IMPORTED GLOBAL)
-set_property(TARGET libgtest PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${source_dir}/googletest/include)
-set_property(TARGET libgtest PROPERTY INTERFACE_LINK_LIBRARIES ${binary_dir}/googlemock/gtest/${GTESTLIBNAME} ${CMAKE_THREAD_LIBS_INIT})
-add_dependencies(libgtest gtest)
+add_library(gtest INTERFACE IMPORTED GLOBAL)
+set_property(TARGET gtest PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${source_dir}/googletest/include)
+set_property(TARGET gtest PROPERTY INTERFACE_LINK_LIBRARIES ${binary_dir}/googlemock/gtest/${GTESTLIBNAME} ${CMAKE_THREAD_LIBS_INIT})
+add_dependencies(gtest googletest)
 
 # Get GMock source and binary directories from CMake project
-add_library(libgmock INTERFACE IMPORTED GLOBAL)
-set_property(TARGET libgmock PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${source_dir}/googlemock/include)
-set_property(TARGET libgmock PROPERTY INTERFACE_LINK_LIBRARIES ${binary_dir}/googlemock/${GMOCKLIBNAME} ${CMAKE_THREAD_LIBS_INIT})
-add_dependencies(libgmock gtest)
+# add_library(gmock INTERFACE IMPORTED GLOBAL)
+# set_property(TARGET gmock PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${source_dir}/googlemock/include)
+# set_property(TARGET gmock PROPERTY INTERFACE_LINK_LIBRARIES ${binary_dir}/googlemock/${GMOCKLIBNAME} ${CMAKE_THREAD_LIBS_INIT})
+# add_dependencies(gmock googletest)
 
 # Workaround to set the following property: include directories are not created until building
 file(MAKE_DIRECTORY ${source_dir}/googletest/include)
-file(MAKE_DIRECTORY ${source_dir}/googlemock/include)
+#file(MAKE_DIRECTORY ${source_dir}/googlemock/include)

@@ -73,8 +73,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_numerics
 	    corbo_numerics
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
         add_test(test_numerics_test test_numerics)
 endif (BUILD_TESTS)

@@ -110,8 +110,8 @@ if (BUILD_TESTS)
 
         target_link_libraries(test_communication
             corbo_communication
-            libgtest
-            libgmock
+            gtest
+            #gmock
         )
         add_test(test_communication_test test_communication)
 endif (BUILD_TESTS)

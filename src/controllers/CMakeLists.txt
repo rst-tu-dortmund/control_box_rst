@@ -60,8 +60,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_controllers
 	    corbo_controllers
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
 	add_test(test_controllers_test test_controllers)
 endif (BUILD_TESTS)

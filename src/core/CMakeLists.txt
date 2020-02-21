@@ -94,8 +94,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_core
 	    corbo_core
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
 	add_test(test_core_test test_core)
 endif (BUILD_TESTS)

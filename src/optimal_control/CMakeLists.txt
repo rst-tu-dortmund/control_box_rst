@@ -82,8 +82,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_optimal_control
             corbo_optimal_control
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
         add_test(test_optimal_control_test test_optimal_control)
 endif (BUILD_TESTS)

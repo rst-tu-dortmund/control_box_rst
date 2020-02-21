@@ -103,8 +103,8 @@ if (BUILD_TESTS)
 
 	target_link_libraries(test_optimization
             corbo_optimization
-	    libgtest
-	    libgmock
+	    gtest
+	    #gmock
 	)
         add_test(test_optimization_test test_optimization)
 endif (BUILD_TESTS)
