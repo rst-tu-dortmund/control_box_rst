@@ -69,7 +69,7 @@ GridUpdateResult FullDiscretizationGridBase::update(const Eigen::VectorXd& x0, R
         setPreviousControl(Eigen::VectorXd::Zero(dynamics->getInputDimension()), prev_u_dt);
 
     // set last control to uref
-    setLastControlRef(uref.getReferenceCached(n));
+    setLastControlRef(uref.getReferenceCached(n - 1));
 
     // TODO(roesmann): we do not check if bounds in nlp_fun are updated
     // updateBounds(); // calling this everytime is not efficient
@@ -506,6 +506,8 @@ void FullDiscretizationGridBase::getVertices(std::vector<VertexInterface*>& vert
     vertices.push_back(&_xf);
     vertices.push_back(&_dt);      // make sure to make it fixed if desired in any subclass
     vertices.push_back(&_u_prev);  // always fixed...
+    vertices.push_back(&_u_ref);
+    vertices.push_back(&_u_prev_dt);
 }
 
 void FullDiscretizationGridBase::computeActiveVertices()

@@ -80,7 +80,7 @@ GridUpdateResult NonUniformFullDiscretizationGridBase::update(const Eigen::Vecto
         setPreviousControl(Eigen::VectorXd::Zero(dynamics->getInputDimension()), prev_u_dt);
 
     // set last control to uref
-    setLastControlRef(uref.getReferenceCached(_n_ref));
+    setLastControlRef(uref.getReferenceCached(_n_ref - 1));
 
     // TODO(roesmann) we do not check if bounds in nlp_fun are updated
     // updateBounds(); // calling this everytime is not efficient
@@ -447,6 +447,8 @@ void NonUniformFullDiscretizationGridBase::getVertices(std::vector<VertexInterfa
     for (VectorVertex& vtx : _u_seq) vertices.push_back(&vtx);
     for (ScalarVertex& vtx : _dt_seq) vertices.push_back(&vtx);
     vertices.push_back(&_u_prev);  // always fixed...
+    vertices.push_back(&_u_ref);
+    vertices.push_back(&_u_prev_dt);
 }
 
 void NonUniformFullDiscretizationGridBase::computeActiveVertices()

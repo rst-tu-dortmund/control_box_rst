@@ -531,6 +531,8 @@ void NonUniformShootingGridBase::getVertices(std::vector<VertexInterface*>& vert
     }
     if (isXfShootingNode()) vertices.push_back(&_xf);  // TODO(roesmann) check if xf_shooting_node is implemented correctly everywhere
     vertices.push_back(&_u_prev);                      // always fixed...
+    vertices.push_back(&_u_ref);
+    vertices.push_back(&_u_prev_dt);
 }
 
 void NonUniformShootingGridBase::computeActiveVertices()
