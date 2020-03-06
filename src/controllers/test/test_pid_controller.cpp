@@ -28,7 +28,6 @@
 #include <corbo-core/console.h>
 #include <thread>
 
-#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 // The fixture for testing class Foo.
