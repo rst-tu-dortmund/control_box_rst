@@ -200,7 +200,7 @@ class SolverIpopt : public NlpSolverInterface
     bool isLsqSolver() const override { return false; }
 
     // implements interface method
-    bool initialize(OptimizationProblemInterface* problem) override
+    bool initialize(OptimizationProblemInterface* problem = nullptr) override
     {
         printWarning();
         return false;
