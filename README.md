@@ -2,6 +2,9 @@
 
 ## Status
 
+ROS package:
+- ROS Melodic (*melodic-devel*): [![Melodic Status](http://build.ros.org/buildStatus/icon?job=Mdev__control_box_rst__ubuntu_bionic_amd64)](http://build.ros.org/job/Mdev__control_box_rst__ubuntu_bionic_amd64/)
+
 
 ## Documentation 
 
@@ -33,6 +36,7 @@
 - C. Rösmann, A. Makarow, F. Hoffmann und T. Bertram: Sparse Shooting at Adaptive Temporal Resolution for Time-Optimal Model Predictive Control, IEEE Conference on Decision and Control (CDC), Australia, December 2017.
 - C. Rösmann, A. Makarow, F. Hoffmann und T. Bertram: Time-Optimal Nonlinear Model Predictive Control with Minimal Control Interventions, IEEE Conference on Control Technology and Applications (CCTA), Hawai'i, August 2017.
 
+<a href="https://www.buymeacoffee.com/croesmann" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Buy Me A Coffee" height="31px" width="132px"></a>
 
 ## License
 
