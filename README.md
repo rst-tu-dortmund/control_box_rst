@@ -8,6 +8,7 @@ ROS package:
 
 ## Documentation 
 
+Build and installation instructions as well as further documentation are provided in the [project wiki](https://github.com/rst-tu-dortmund/control_box_rst/wiki).
 
 ## Authors
 
