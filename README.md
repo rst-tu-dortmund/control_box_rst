@@ -25,7 +25,7 @@ Build and installation instructions as well as further documentation are provide
 
 **Time-Optimal MPC and Hypergraph**
 
-- C. Rösmann: [Time-optimal nonlinear model predictive control - Direct transcription methods with variable discretization and structural sparsity exploitation](http://dx.doi.org/10.17877/DE290R-20283). Dissertation, TU Dortmund University, Oct. 2019.
+- C. Rösmann: [Time-optimal nonlinear model predictive control, Direct transcription methods with variable discretization and structural sparsity exploitation](http://dx.doi.org/10.17877/DE290R-20283). Dissertation, Technische Universität Dortmund, Oct. 2019.
 
 **Uniform Grid Time-Optimal MPC**
 
