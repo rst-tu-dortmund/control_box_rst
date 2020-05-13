@@ -2,6 +2,15 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Changed minimum CMake version to 3.1
+* Add default parameter to SolverIpopt::initialize() in case Ipopt is not found..
+* Removed obsolete gmock include
+* Fix setLastControlRef and graph consistency.
+* Internal libgtest target renamed. Fixed compilation issue for yaml-cpp test
+* Contributors: Christoph Rösmann, Maximilian Krämer
+
 0.0.4 (2020-02-21)
 ------------------
 * Removed exec_depend on catkin to allow the use of the same release for ros1 and ros2
