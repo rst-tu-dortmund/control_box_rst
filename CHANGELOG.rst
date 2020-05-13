@@ -2,8 +2,8 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.5 (2020-05-13)
+------------------
 * Changed minimum CMake version to 3.1
 * Add default parameter to SolverIpopt::initialize() in case Ipopt is not found..
 * Removed obsolete gmock include
