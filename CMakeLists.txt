@@ -10,6 +10,16 @@ set(BUILD_TESTS OFF CACHE BOOL "Build unit tests" FORCE)
 # Set to Release in order to speed up the program significantly
 set(CMAKE_BUILD_TYPE Release) #None, Debug, Release, RelWithDebInfo, MinSizeRel
 
+if (BUILD_TESTING)
+  message(STATUS "Tests are currently deactivated.")
+  #set(BUILD_TESTS ON)
+endif()
+
+if(CATKIN_ENABLE_TESTING AND NOT CATKIN_SKIP_TESTING) 
+  message(STATUS "Catkin testing is currently deactivated.")
+  #set(BUILD_TESTS ON)
+endif() 
+
 add_subdirectory(src)
 
 # Install catkin package.xml
