@@ -2,6 +2,12 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Hybrid cost functions added: Minimum time and control/state quadratic form
+* Discretization grids: The time difference is now initialized to dt_ref for proper reference caching
+* Contributors: Christoph Rösmann
+
 0.0.5 (2020-05-13)
 ------------------
 * Changed minimum CMake version to 3.1
