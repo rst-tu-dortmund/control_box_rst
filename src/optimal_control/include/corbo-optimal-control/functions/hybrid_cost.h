@@ -191,6 +191,13 @@ class MinTimeQuadratic : public StageCost
  public:
     MinTimeQuadratic() = default;
 
+    MinTimeQuadratic(const Eigen::Ref<const Eigen::MatrixXd>& Q, const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form)
+    {
+        _quad_cost.setWeightQ(Q);
+        _quad_cost.setWeightR(R);
+        _quad_cost.setIntegralForm(integral_form);
+    }
+
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadratic>(); }
 
     bool hasNonIntegralTerms(int k) const override
@@ -298,6 +305,12 @@ class MinTimeQuadraticControls : public StageCost
  public:
     MinTimeQuadraticControls() = default;
 
+    MinTimeQuadraticControls(const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form)
+    {
+        _quad_control_cost.setWeightR(R);
+        _quad_control_cost.setIntegralForm(integral_form);
+    }
+
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadraticControls>(); }
 
     bool hasNonIntegralTerms(int k) const override
@@ -374,6 +387,12 @@ class MinTimeQuadraticStates : public StageCost
 {
  public:
     MinTimeQuadraticStates() = default;
+
+    MinTimeQuadraticStates(const Eigen::Ref<const Eigen::MatrixXd>& Q, bool integral_form)
+    {
+        _quad_state_cost.setWeightQ(Q);
+        _quad_state_cost.setIntegralForm(integral_form);
+    }
 
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadraticStates>(); }
 

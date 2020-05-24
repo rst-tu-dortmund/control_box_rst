@@ -56,6 +56,7 @@ class QuadraticStateCost : public StageCost
     bool setWeightQ(const Eigen::Ref<const Eigen::MatrixXd>& Q);
     bool setWeightQ(const Eigen::DiagonalMatrix<double, -1>& Q);
     void setLsqForm(bool lsq_form) { _lsq_form = lsq_form; }
+    void setIntegralForm(bool integral_form) { _integral_form = integral_form; }
 
     void computeNonIntegralStateTerm(int k, const Eigen::Ref<const Eigen::VectorXd>& x_k, Eigen::Ref<Eigen::VectorXd> cost) const override;
     void computeIntegralStateControlTerm(int k, const Eigen::Ref<const Eigen::VectorXd>& x_k, const Eigen::Ref<const Eigen::VectorXd>& u_k,
