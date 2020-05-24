@@ -27,6 +27,7 @@ message StageCost
     MinTimeQuadraticGainScheduled min_time_quad_form_gain_scheduled = 20;
     MinTimeQuadratic min_time_quad_form = 21;
     MinTimeQuadraticControls min_time_quad_controls = 22;
+    MinTimeQuadraticStates min_time_quad_states = 23;
 
     corbocustom.messages.StageCost custom_stage_cost = 101;
   }
@@ -89,6 +90,12 @@ message MinTimeQuadraticControls
 {
   MinimumTime minimum_time = 1;
   QuadraticControlCost quadratic_controls = 2;
+}
+
+message MinTimeQuadraticStates
+{
+  MinimumTime minimum_time = 1;
+  QuadraticStateCost quadratic_states = 2;
 }
 
 // ====== FinalStageCost ======
