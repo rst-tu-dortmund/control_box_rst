@@ -75,8 +75,14 @@ class QuadraticStateCost : public StageCost
     bool checkParameters(int state_dim, int control_dim, std::stringstream* issues) const override;
 
 #ifdef MESSAGE_SUPPORT
-    bool fromMessage(const messages::StageCost& message, std::stringstream* issues) override;
-    void toMessage(messages::StageCost& message) const override;
+    virtual bool fromMessage(const messages::QuadraticStateCost& message, std::stringstream* issues);
+    virtual void toMessage(messages::QuadraticStateCost& message) const;
+
+    bool fromMessage(const messages::StageCost& message, std::stringstream* issues) override
+    {
+        return fromMessage(message.quadratic_state_cost(), issues);
+    }
+    void toMessage(messages::StageCost& message) const override { toMessage(*message.mutable_quadratic_state_cost()); }
 #endif
 
  protected:

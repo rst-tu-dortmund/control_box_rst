@@ -160,15 +160,14 @@ bool QuadraticStateCost::checkParameters(int state_dim, int control_dim, std::st
 }
 
 #ifdef MESSAGE_SUPPORT
-bool QuadraticStateCost::fromMessage(const messages::StageCost& message, std::stringstream* issues)
+bool QuadraticStateCost::fromMessage(const messages::QuadraticStateCost& message, std::stringstream* issues)
 {
-    _diagonal_mode = message.quadratic_state_cost().diagonal_only();
+    _diagonal_mode = message.diagonal_only();
 
     if (_diagonal_mode)
     {
         if (!setWeightQ(
-                Eigen::Map<const Eigen::Matrix<double, -1, 1>>(message.quadratic_state_cost().q().data(), message.quadratic_state_cost().q_size())
-                    .asDiagonal()))
+                Eigen::Map<const Eigen::Matrix<double, -1, 1>>(message.q().data(), message.q_size()).asDiagonal()))
         {
             *issues << "QuadraticStateCost: cannot set diagonal weight matrix Q.\n";
             return false;
@@ -176,9 +175,9 @@ bool QuadraticStateCost::fromMessage(const messages::StageCost& message, std::st
     }
     else
     {
-        int p = std::sqrt(message.quadratic_state_cost().q_size());
+        int p = std::sqrt(message.q_size());
 
-        if (p * p != message.quadratic_state_cost().q_size())
+        if (p * p != message.q_size())
         {
             *issues << "QuadraticStateCost: weight matrix Q is not square.\n";
             return false;
@@ -187,7 +186,7 @@ bool QuadraticStateCost::fromMessage(const messages::StageCost& message, std::st
         // weight matrix Q
         // if (p * p == message.full_discretization_ocp().q_size())
         //{
-        if (!setWeightQ(Eigen::Map<const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(message.quadratic_state_cost().q().data(), p, p)) && issues)
+        if (!setWeightQ(Eigen::Map<const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(message.q().data(), p, p)) && issues)
         {
             *issues << "QuadraticStateCost: weight matrix Q is not positive definite.\n";
             return false;
@@ -198,34 +197,33 @@ bool QuadraticStateCost::fromMessage(const messages::StageCost& message, std::st
     }
 
     // others
-    _lsq_form      = message.quadratic_state_cost().lsq_form();
-    _integral_form = message.quadratic_state_cost().integral_form();
+    _lsq_form      = message.lsq_form();
+    _integral_form = message.integral_form();
     return true;
 }
 
-void QuadraticStateCost::toMessage(messages::StageCost& message) const
+void QuadraticStateCost::toMessage(messages::QuadraticStateCost& message) const
 {
     // weight matrix Q
     if (_diagonal_mode_intentionally && _diagonal_mode)
     {
         Eigen::VectorXd Qdiag = _Q_diag.diagonal();
-        message.mutable_quadratic_state_cost()->mutable_q()->Resize(Qdiag.size(), 0);
-        Eigen::Map<Eigen::VectorXd>(message.mutable_quadratic_state_cost()->mutable_q()->mutable_data(), Qdiag.size()) = Qdiag;
+        message.mutable_q()->Resize(Qdiag.size(), 0);
+        Eigen::Map<Eigen::VectorXd>(message.mutable_q()->mutable_data(), Qdiag.size()) = Qdiag;
 
-        message.mutable_quadratic_state_cost()->set_diagonal_only(true);
+        message.set_diagonal_only(true);
     }
     else
     {
         Eigen::MatrixXd Q = _Q;  // Q = _Q_sqrt.adjoint() * _Q_sqrt;
-        message.mutable_quadratic_state_cost()->mutable_q()->Resize(Q.rows() * Q.cols(), 0);
-        Eigen::Map<Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(message.mutable_quadratic_state_cost()->mutable_q()->mutable_data(), Q.rows(),
-                                                                   Q.cols()) = Q;
+        message.mutable_q()->Resize(Q.rows() * Q.cols(), 0);
+        Eigen::Map<Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(message.mutable_q()->mutable_data(), Q.rows(), Q.cols()) = Q;
 
-        message.mutable_quadratic_state_cost()->set_diagonal_only(false);
+        message.set_diagonal_only(false);
     }
     // others
-    message.mutable_quadratic_state_cost()->set_lsq_form(_lsq_form);
-    message.mutable_quadratic_state_cost()->set_integral_form(_integral_form);
+    message.set_lsq_form(_lsq_form);
+    message.set_integral_form(_integral_form);
 }
 #endif
 
