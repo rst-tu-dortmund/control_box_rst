@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>control_box_rst</name>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <description>The control_box_rst package provides C++ libraries for predictive control, 
                direct optimal control, optimization and simulation.</description>
 

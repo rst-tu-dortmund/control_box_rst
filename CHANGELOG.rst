@@ -2,8 +2,8 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.6 (2020-05-24)
+------------------
 * Hybrid cost functions added: Minimum time and control/state quadratic form
 * Discretization grids: The time difference is now initialized to dt_ref for proper reference caching
 * Contributors: Christoph Rösmann
