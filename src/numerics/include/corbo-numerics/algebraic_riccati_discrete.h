@@ -27,6 +27,8 @@
 
 #include <corbo-core/types.h>
 
+#include <Eigen/Eigenvalues>
+
 namespace corbo {
 
 /**
