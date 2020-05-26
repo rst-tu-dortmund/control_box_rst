@@ -1,0 +1,20 @@
+language: generic
+os: linux
+dist: bionic
+
+notifications:
+  email:
+    recipients:
+      - christoph.roesmann@tu-dortmund.de
+    on_success: change
+    on_failure: change
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install cmake doxygen libsuitesparse-dev qt5-default coinor-libipopt-dev 
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ../src
+  - make
