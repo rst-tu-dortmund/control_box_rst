@@ -191,11 +191,13 @@ class MinTimeQuadratic : public StageCost
  public:
     MinTimeQuadratic() = default;
 
-    MinTimeQuadratic(const Eigen::Ref<const Eigen::MatrixXd>& Q, const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form)
+    MinTimeQuadratic(const Eigen::Ref<const Eigen::MatrixXd>& Q, const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form, bool lsq_form = false)
     {
         _quad_cost.setWeightQ(Q);
         _quad_cost.setWeightR(R);
         _quad_cost.setIntegralForm(integral_form);
+        _quad_cost.setLsqForm(lsq_form);
+        _min_time.setLsqForm(lsq_form);
     }
 
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadratic>(); }
@@ -214,6 +216,7 @@ class MinTimeQuadratic : public StageCost
         return k >= _quad_k_min ? _quad_cost.getIntegralStateControlTermDimension(k) : 0;
     }
 
+    bool isLsqFormNonIntegralDtTerm(int k) const override { return _min_time.isLsqFormNonIntegralDtTerm(k); }
     bool isLsqFormNonIntegralStateTerm(int k) const override { return _quad_cost.isLsqFormNonIntegralStateTerm(k); }
     bool isLsqFormNonIntegralControlTerm(int k) const override { return _quad_cost.isLsqFormNonIntegralControlTerm(k); }
 
@@ -305,10 +308,12 @@ class MinTimeQuadraticControls : public StageCost
  public:
     MinTimeQuadraticControls() = default;
 
-    MinTimeQuadraticControls(const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form)
+    MinTimeQuadraticControls(const Eigen::Ref<const Eigen::MatrixXd>& R, bool integral_form, bool lsq_form = false)
     {
         _quad_control_cost.setWeightR(R);
         _quad_control_cost.setIntegralForm(integral_form);
+        _quad_control_cost.setLsqForm(lsq_form);
+        _min_time.setLsqForm(lsq_form);
     }
 
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadraticControls>(); }
@@ -326,6 +331,7 @@ class MinTimeQuadraticControls : public StageCost
         return _quad_control_cost.getIntegralStateControlTermDimension(k);
     }
 
+    bool isLsqFormNonIntegralDtTerm(int k) const override { return _min_time.isLsqFormNonIntegralDtTerm(k); }
     bool isLsqFormNonIntegralControlTerm(int k) const override { return _quad_control_cost.isLsqFormNonIntegralControlTerm(k); }
 
     bool update(int n, double t, ReferenceTrajectoryInterface& xref, ReferenceTrajectoryInterface& uref, ReferenceTrajectoryInterface* sref,
@@ -388,10 +394,12 @@ class MinTimeQuadraticStates : public StageCost
  public:
     MinTimeQuadraticStates() = default;
 
-    MinTimeQuadraticStates(const Eigen::Ref<const Eigen::MatrixXd>& Q, bool integral_form)
+    MinTimeQuadraticStates(const Eigen::Ref<const Eigen::MatrixXd>& Q, bool integral_form, bool lsq_form = false)
     {
         _quad_state_cost.setWeightQ(Q);
         _quad_state_cost.setIntegralForm(integral_form);
+        _quad_state_cost.setLsqForm(lsq_form);
+        _min_time.setLsqForm(lsq_form);
     }
 
     StageCost::Ptr getInstance() const override { return std::make_shared<MinTimeQuadraticStates>(); }
@@ -409,6 +417,7 @@ class MinTimeQuadraticStates : public StageCost
         return _quad_state_cost.getIntegralStateControlTermDimension(k);
     }
 
+    bool isLsqFormNonIntegralDtTerm(int k) const override { return _min_time.isLsqFormNonIntegralDtTerm(k); }
     bool isLsqFormNonIntegralStateTerm(int k) const override { return _quad_state_cost.isLsqFormNonIntegralStateTerm(k); }
 
     bool update(int n, double t, ReferenceTrajectoryInterface& xref, ReferenceTrajectoryInterface& uref, ReferenceTrajectoryInterface* sref,
