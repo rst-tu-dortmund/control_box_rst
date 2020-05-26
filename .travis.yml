@@ -9,12 +9,19 @@ notifications:
     on_success: change
     on_failure: change
 
+cache:
+  apt: true
+  directories:
+   - $TRAVIS_BUILD_DIR/build/extern/
+  
+
 before_install:
   - sudo apt-get update
   - sudo apt-get -y install cmake doxygen libsuitesparse-dev qt5-default coinor-libipopt-dev 
 
 script:
-  - mkdir build
+  - mkdir -p build
   - cd build
-  - cmake ../src
+  - cmake -D"CMAKE_BUILD_TYPE=Debug" -D"BUILD_TESTS=ON" ../src
   - make
+  - ctest --output-on-failure
