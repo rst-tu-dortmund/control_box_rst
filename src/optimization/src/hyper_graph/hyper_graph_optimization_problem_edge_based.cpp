@@ -182,9 +182,10 @@ void HyperGraphOptimizationProblemEdgeBased::computeDenseJacobianLsqObjective(Ei
             int vert_dim_unfixed = edge->getVertexRaw(i)->getDimensionUnfixed();
             if (vert_dim_unfixed == 0) continue;
 
-            edge->computeObjectiveJacobian(i, jacobian.block(edge->getEdgeObjectiveIdx(), edge->getVertexRaw(i)->getVertexIdx(),
-                                                             edge->getObjectiveDimension(), vert_dim_unfixed),
-                                           multipliers ? multipliers + edge->getEdgeObjectiveIdx() : nullptr);
+            edge->computeObjectiveJacobian(
+                i,
+                jacobian.block(edge->getEdgeObjectiveIdx(), edge->getVertexRaw(i)->getVertexIdx(), edge->getObjectiveDimension(), vert_dim_unfixed),
+                multipliers ? multipliers + edge->getEdgeObjectiveIdx() : nullptr);
         }
     }
 }
@@ -532,9 +533,10 @@ void HyperGraphOptimizationProblemEdgeBased::computeDenseJacobianInequalities(Ei
             if (vert_dim_unfixed == 0) continue;
 
             Eigen::MatrixXd block_jacobian(edge->getInequalityDimension(), vert_dim_unfixed);
-            edge->computeInequalityJacobian(i, jacobian.block(edge->getEdgeInequalityIdx(), edge->getVertexRaw(i)->getVertexIdx(),
-                                                              edge->getInequalityDimension(), vert_dim_unfixed),
-                                            multipliers ? multipliers + edge->getEdgeInequalityIdx() : nullptr);
+            edge->computeInequalityJacobian(
+                i,
+                jacobian.block(edge->getEdgeInequalityIdx(), edge->getVertexRaw(i)->getVertexIdx(), edge->getInequalityDimension(), vert_dim_unfixed),
+                multipliers ? multipliers + edge->getEdgeInequalityIdx() : nullptr);
         }
     }
 }
@@ -761,16 +763,16 @@ void HyperGraphOptimizationProblemEdgeBased::computeSparseJacobianActiveInequali
     // Iterate inequality edges
     for (BaseEdge::Ptr& edge : edges->getInequalityEdgesRef())
     {
+        // compute values and check which values are active
+        // TODO(roesmann): we could obtain values computed before calling computeDenseJacobianActiveInequalities();
+        Eigen::VectorXd edge_values(edge->getDimension());
+        edge->computeValues(edge_values);
+        Eigen::Array<bool, -1, 1> active = edge_values.array() > 0.0;
+
         for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
         {
             int vert_dim_unfixed = edge->getVertexRaw(vert_idx)->getDimensionUnfixed();
             if (vert_dim_unfixed == 0) continue;
-
-            // compute values and check which values are active
-            // TODO(roesmann): we could obtain values computed before calling computeDenseJacobianActiveInequalities();
-            Eigen::VectorXd edge_values(edge->getDimension());
-            edge->computeValues(edge_values);
-            Eigen::Array<bool, -1, 1> active = edge_values.array() > 0.0;
 
             Eigen::Map<Eigen::MatrixXd> block_jacobian(values.data() + nnz_idx, edge->getDimension(), vert_dim_unfixed);
             nnz_idx += block_jacobian.rows() * block_jacobian.cols();
@@ -800,17 +802,17 @@ void HyperGraphOptimizationProblemEdgeBased::computeSparseJacobianActiveInequali
     {
         if (edge->getInequalityDimension() == 0) continue;
 
+        // compute values and check which values are active
+        // TODO(roesmann): we could obtain values computed before calling computeDenseJacobianActiveInequalities();
+        Eigen::VectorXd edge_values(edge->getInequalityDimension());
+        edge->precompute();
+        edge->computeInequalityValues(edge_values);
+        Eigen::Array<bool, -1, 1> active = edge_values.array() > 0.0;
+
         for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
         {
             int vert_dim_unfixed = edge->getVertexRaw(vert_idx)->getDimensionUnfixed();
             if (vert_dim_unfixed == 0) continue;
-
-            // compute values and check which values are active
-            // TODO(roesmann): we could obtain values computed before calling computeDenseJacobianActiveInequalities();
-            Eigen::VectorXd edge_values(edge->getInequalityDimension());
-            edge->precompute();
-            edge->computeInequalityValues(edge_values);
-            Eigen::Array<bool, -1, 1> active = edge_values.array() > 0.0;
 
             Eigen::Map<Eigen::MatrixXd> block_jacobian(values.data() + nnz_idx, edge->getInequalityDimension(), vert_dim_unfixed);
             nnz_idx += block_jacobian.rows() * block_jacobian.cols();
@@ -1468,8 +1470,283 @@ void HyperGraphOptimizationProblemEdgeBased::computeCombinedSparseJacobiansValue
                 {
                     Eigen::Map<Eigen::MatrixXd> block_ineq(values.data() + nnz_idx, edge->getInequalityDimension(), vert_dim_unfixed);
                     nnz_idx += block_ineq.rows() * block_ineq.cols();
-                    edge->computeEqualityJacobian(vert_idx, block_ineq, mult_ineq_part);
+                    edge->computeInequalityJacobian(vert_idx, block_ineq, mult_ineq_part);
                 }
+            }
+        }
+    }
+}
+
+void HyperGraphOptimizationProblemEdgeBased::computeCombinedSparseJacobian(Eigen::SparseMatrix<double>& jacobian, bool objective_lsq, bool equality,
+                                                                           bool inequality, bool finite_combined_bounds, bool active_ineq,
+                                                                           double weight_eq, double weight_ineq, double weight_bounds,
+                                                                           const Eigen::VectorXd* values, const Eigen::VectorXi* col_nnz)
+{
+    jacobian.setZero();  // this might be obsolete as we explicitly set numeric zeros below.
+    // TODO(roesmann): what is most efficient, if we just want to udpate the Jacobian?
+    if (col_nnz) jacobian.reserve(*col_nnz);
+
+    OptimizationEdgeSet::Ptr edges = _graph.getEdgeSet();
+
+    int equality_row_start   = objective_lsq ? getLsqObjectiveDimension() : 0;
+    int inequality_row_start = equality ? equality_row_start + getEqualityDimension() : equality_row_start;
+    int bounds_start         = inequality ? inequality_row_start + getInequalityDimension() : inequality_row_start;
+
+    if (objective_lsq && getLsqObjectiveDimension() > 0)
+    {
+        // Iterate lsq objective edges
+        for (BaseEdge::Ptr& edge : edges->getLsqObjectiveEdgesRef())
+        {
+            for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
+            {
+                const VertexInterface* vertex = edge->getVertexRaw(vert_idx);
+
+                int vert_dim_unfixed = vertex->getDimensionUnfixed();
+                if (vert_dim_unfixed == 0) continue;
+
+                Eigen::MatrixXd block_jacobian(edge->getDimension(), vert_dim_unfixed);
+                edge->computeJacobian(vert_idx, block_jacobian);
+
+                // Iterate all free variables
+                int idx_free = 0;
+                for (int i = 0; i < vertex->getDimension(); ++i)
+                {
+                    if (!vertex->isFixedComponent(i))
+                    {
+                        // Iterate inner edge dimension
+                        for (int j = 0; j < edge->getDimension(); ++j)
+                        {
+                            jacobian.coeffRef(edge->getEdgeIdx() + j, vertex->getVertexIdx() + idx_free) = block_jacobian(j, idx_free);
+                        }
+                        ++idx_free;
+                    }
+                }
+            }
+        }
+    }
+
+    if (equality && getEqualityDimension() > 0)
+    {
+        // Iterate equality edges
+        for (BaseEdge::Ptr& edge : edges->getEqualityEdgesRef())
+        {
+            for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
+            {
+                const VertexInterface* vertex = edge->getVertexRaw(vert_idx);
+
+                int vert_dim_unfixed = vertex->getDimensionUnfixed();
+                if (vert_dim_unfixed == 0) continue;
+
+                Eigen::MatrixXd block_jacobian(edge->getDimension(), vert_dim_unfixed);
+                edge->computeJacobian(vert_idx, block_jacobian);
+
+                // Iterate all free variables
+                int idx_free = 0;
+                for (int i = 0; i < vertex->getDimension(); ++i)
+                {
+                    if (!vertex->isFixedComponent(i))
+                    {
+                        // Iterate inner edge dimension
+                        for (int j = 0; j < edge->getDimension(); ++j)
+                        {
+                            jacobian.coeffRef(equality_row_start + edge->getEdgeIdx() + j, vertex->getVertexIdx() + idx_free) =
+                                block_jacobian(j, idx_free) * weight_eq;
+                        }
+                        ++idx_free;
+                    }
+                }
+            }
+        }
+    }
+
+    if (inequality && getInequalityDimension() > 0)
+    {
+        // Iterate inequality edges
+        for (BaseEdge::Ptr& edge : edges->getInequalityEdgesRef())
+        {
+            // check if active
+            Eigen::Array<bool, -1, 1> active(edge->getDimension());
+            if (active_ineq)
+            {
+                if (values)
+                    active = values->segment(inequality_row_start + edge->getEdgeIdx(), edge->getDimension()).array() > 0.0;
+                else
+                {
+                    Eigen::VectorXd values_tmp(edge->getDimension());
+                    edge->computeValues(values_tmp);
+                    active = values_tmp.array() > 0.0;
+                }
+            }
+            else
+                active.setConstant(true);
+
+            for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
+            {
+                const VertexInterface* vertex = edge->getVertexRaw(vert_idx);
+
+                int vert_dim_unfixed = vertex->getDimensionUnfixed();
+                if (vert_dim_unfixed == 0) continue;
+
+                Eigen::MatrixXd block_jacobian(edge->getDimension(), vert_dim_unfixed);
+                edge->computeJacobian(vert_idx, block_jacobian);
+
+                // Iterate all free variables
+                int idx_free = 0;
+                for (int i = 0; i < vertex->getDimension(); ++i)
+                {
+                    if (!vertex->isFixedComponent(i))
+                    {
+                        // Iterate inner edge dimension
+                        for (int j = 0; j < edge->getDimension(); ++j)
+                        {
+                            if (active[j])
+                            {
+                                jacobian.coeffRef(inequality_row_start + edge->getEdgeIdx() + j, vertex->getVertexIdx() + idx_free) =
+                                    block_jacobian(j, idx_free) * weight_ineq;
+                            }
+                            else
+                            {
+                                jacobian.coeffRef(inequality_row_start + edge->getEdgeIdx() + j, vertex->getVertexIdx() + idx_free) = 0.0;
+                            }
+                        }
+                        ++idx_free;
+                    }
+                }
+            }
+        }
+    }
+
+    // Iterate mixed edges
+    for (BaseMixedEdge::Ptr& edge : edges->getMixedEdgesRef())
+    {
+        if (!objective_lsq && edge->getEqualityDimension() == 0 && edge->getInequalityDimension() == 0) continue;
+        // TODO(roesmann) implement the other cases as well
+
+        // check if active
+        Eigen::Array<bool, -1, 1> active(edge->getInequalityDimension());
+        if (active_ineq && inequality)
+        {
+            if (values)
+                active = values->segment(inequality_row_start + edge->getEdgeInequalityIdx(), edge->getInequalityDimension()).array() > 0.0;
+            else
+            {
+                Eigen::VectorXd values_tmp(edge->getInequalityDimension());
+                edge->computeInequalityValues(values_tmp);
+                active = values_tmp.array() > 0.0;
+            }
+        }
+        else if (inequality)
+            active.setConstant(true);
+
+        for (int vert_idx = 0; vert_idx < edge->getNumVertices(); ++vert_idx)
+        {
+            const VertexInterface* vertex = edge->getVertexRaw(vert_idx);
+
+            int vert_dim_unfixed = vertex->getDimensionUnfixed();
+            if (vert_dim_unfixed == 0) continue;
+
+            Eigen::MatrixXd block_obj(edge->getObjectiveDimension(), vert_dim_unfixed);
+            Eigen::MatrixXd block_eq(edge->getEqualityDimension(), vert_dim_unfixed);
+            Eigen::MatrixXd block_ineq(edge->getInequalityDimension(), vert_dim_unfixed);
+
+            if (objective_lsq && equality && inequality)
+            {
+                edge->computeJacobians(vert_idx, block_obj, block_eq, block_ineq);
+            }
+            else if (equality && inequality)
+            {
+                edge->computeConstraintJacobians(vert_idx, block_eq, block_ineq);
+            }
+            else
+            {
+                // TODO(roesmann) this is not really efficient yet
+                if (objective_lsq)
+                {
+                    edge->computeObjectiveJacobian(vert_idx, block_obj);
+                }
+                if (equality)
+                {
+                    edge->computeEqualityJacobian(vert_idx, block_eq);
+                }
+                if (inequality)
+                {
+                    edge->computeInequalityJacobian(vert_idx, block_ineq);
+                }
+            }
+
+            // Iterate all free variables
+            int idx_free = 0;
+
+            for (int i = 0; i < vertex->getDimension(); ++i)
+            {
+                if (!vertex->isFixedComponent(i))
+                {
+                    // Iterate inner edge dimension
+                    if (objective_lsq)
+                    {
+                        for (int j = 0; j < edge->getObjectiveDimension(); ++j)
+                        {
+                            jacobian.coeffRef(edge->getEdgeObjectiveIdx() + j, vertex->getVertexIdx() + idx_free) = block_obj(j, idx_free);
+                        }
+                    }
+                    if (equality)
+                    {
+                        for (int j = 0; j < edge->getEqualityDimension(); ++j)
+                        {
+                            jacobian.coeffRef(equality_row_start + edge->getEdgeEqualityIdx() + j, vertex->getVertexIdx() + idx_free) =
+                                block_eq(j, idx_free) * weight_eq;
+                        }
+                    }
+                    if (inequality)
+                    {
+                        for (int j = 0; j < edge->getInequalityDimension(); ++j)
+                        {
+                            if (active[j])
+                            {
+                                jacobian.coeffRef(inequality_row_start + edge->getEdgeInequalityIdx() + j, vertex->getVertexIdx() + idx_free) =
+                                    block_ineq(j, idx_free) * weight_ineq;
+                            }
+                            else
+                            {
+                                jacobian.coeffRef(inequality_row_start + edge->getEdgeInequalityIdx() + j, vertex->getVertexIdx() + idx_free) = 0.0;
+                            }
+                        }
+                    }
+                    ++idx_free;
+                }
+            }
+        }
+    }
+
+    if (finite_combined_bounds && finiteCombinedBoundsDimension() > 0)
+    {
+        // we have a single value per row
+        int jac_row_idx = bounds_start;
+        // Iterate vertices
+        for (const VertexInterface* vertex : _graph.getVertexSet()->getActiveVertices())
+        {
+            int vert_idx = vertex->getVertexIdx();
+            int free_idx = 0;
+            for (int i = 0; i < vertex->getDimension(); ++i)
+            {
+                if (vertex->isFixedComponent(i)) continue;
+
+                if (vertex->hasFiniteLowerBound(i) || vertex->hasFiniteUpperBound(i))
+                {
+                    if (vertex->getData()[i] < vertex->getLowerBounds()[i])
+                    {
+                        jacobian.coeffRef(jac_row_idx, vert_idx + free_idx) = -weight_bounds;
+                    }
+                    else if (vertex->getData()[i] > vertex->getUpperBounds()[i])
+                    {
+                        jacobian.coeffRef(jac_row_idx, vert_idx + free_idx) = weight_bounds;
+                    }
+                    else
+                        jacobian.coeffRef(jac_row_idx, vert_idx + free_idx) = 0.0;  // preserve structure
+
+                    ++jac_row_idx;
+                }
+                ++free_idx;
             }
         }
     }

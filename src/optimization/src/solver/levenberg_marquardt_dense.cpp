@@ -108,13 +108,13 @@ SolverStatus LevenbergMarquardtDense::solve(OptimizationProblemInterface& proble
 
     bool stop = (_rhs.lpNorm<Eigen::Infinity>() <= eps1);
 
-    double mu      = tau * _hessian.diagonal().maxCoeff();
+    double mu = tau * _hessian.diagonal().maxCoeff();
     if (mu < 0) mu = 0;
 
     double rho = 0;
 
     // get old chi2
-    double chi2_old           = _values.squaredNorm();
+    double chi2_old = _values.squaredNorm();
     if (obj_value) *obj_value = chi2_old;
 
     // start levenberg marquardt optimization loop
@@ -176,7 +176,7 @@ SolverStatus LevenbergMarquardtDense::solve(OptimizationProblemInterface& proble
                         v = 2;
                     }
 
-                    chi2_old                  = chi2_new;
+                    chi2_old = chi2_new;
                     if (obj_value) *obj_value = chi2_old;
                 }
                 else

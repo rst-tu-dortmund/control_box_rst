@@ -71,6 +71,10 @@ class HyperGraphOptimizationProblemVertexBased : public BaseHyperGraphOptimizati
     void computeCombinedSparseJacobiansValues(Eigen::Ref<Eigen::VectorXd> values, bool objective_lsq = true, bool equality = true,
                                               bool inequality = true, const double* multipliers_obj = nullptr, const double* multipliers_eq = nullptr,
                                               const double* multipliers_ineq = nullptr) override;
+    void computeCombinedSparseJacobian(Eigen::SparseMatrix<double>& jacobian, bool objective_lsq, bool equality, bool inequality,
+                                       bool finite_combined_bounds, bool active_ineq = false, double weight_eq = 1.0, double weight_ineq = 1.0,
+                                       double weight_bounds = 1.0, const Eigen::VectorXd* values = nullptr,
+                                       const Eigen::VectorXi* col_nnz = nullptr) override;
 
     // useful for IPOPT (w/ hessian-approx)
     void computeGradientObjectiveAndCombinedSparseJacobiansValues(Eigen::Ref<Eigen::VectorXd> gradient, Eigen::Ref<Eigen::VectorXd> jac_values,

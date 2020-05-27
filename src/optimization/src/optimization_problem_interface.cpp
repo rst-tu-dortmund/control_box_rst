@@ -701,7 +701,8 @@ void OptimizationProblemInterface::computeDenseJacobianFiniteCombinedBoundsIdent
 
 void OptimizationProblemInterface::computeCombinedSparseJacobian(Eigen::SparseMatrix<double>& jacobian, bool objective_lsq, bool equality,
                                                                  bool inequality, bool finite_combined_bounds, bool active_ineq, double weight_eq,
-                                                                 double weight_ineq, double weight_bounds)
+                                                                 double weight_ineq, double weight_bounds, const Eigen::VectorXd* values,
+                                                                 const Eigen::VectorXi* col_nnz)
 {
     PRINT_DEBUG_COND_ONCE(_warn_if_not_specialized,
                           "OptimizationProblemInterface::computeCombinedSparseJacobian(): default implementation might be slow.");

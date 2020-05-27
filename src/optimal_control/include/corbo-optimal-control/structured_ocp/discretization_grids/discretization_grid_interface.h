@@ -152,6 +152,7 @@ class DiscretizationGridInterface : public VertexSetInterface
 
     void setPreviousControl(const Eigen::VectorXd& prev_u, double prev_u_dt)
     {
+        if (!_u_prev.isFixed() || !_u_prev_dt.isFixed()) setModified(true);
         _u_prev.values() = prev_u;
         _u_prev.setFixed(true);
         _u_prev_dt.value() = prev_u_dt;
@@ -159,6 +160,7 @@ class DiscretizationGridInterface : public VertexSetInterface
     }
     void setLastControlRef(const Eigen::VectorXd& last_u_ref)
     {
+        if (!_u_ref.isFixed()) setModified(true);
         _u_ref.values() = last_u_ref;
         _u_ref.setFixed(true);
     }

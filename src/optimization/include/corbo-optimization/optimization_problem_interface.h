@@ -449,7 +449,8 @@ class OptimizationProblemInterface
 
     virtual void computeCombinedSparseJacobian(Eigen::SparseMatrix<double>& jacobian, bool objective_lsq, bool equality, bool inequality,
                                                bool finite_combined_bounds, bool active_ineq = false, double weight_eq = 1.0,
-                                               double weight_ineq = 1.0, double weight_bounds = 1.0);
+                                               double weight_ineq = 1.0, double weight_bounds = 1.0, const Eigen::VectorXd* values = nullptr,
+                                               const Eigen::VectorXi* col_nnz = nullptr);
 
     virtual int computeCombinedSparseJacobiansNNZ(bool objective_lsq = true, bool equality = true, bool inequality = true);
     virtual void computeCombinedSparseJacobiansStructure(Eigen::Ref<Eigen::VectorXi> i_row, Eigen::Ref<Eigen::VectorXi> j_col,

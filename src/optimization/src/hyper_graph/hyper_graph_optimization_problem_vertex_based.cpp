@@ -1331,6 +1331,16 @@ void HyperGraphOptimizationProblemVertexBased::computeCombinedSparseJacobiansVal
     assert(getGraph().getEdgeSet()->isEdgeCacheEmpty());
 }
 
+void HyperGraphOptimizationProblemVertexBased::computeCombinedSparseJacobian(Eigen::SparseMatrix<double>& jacobian, bool objective_lsq, bool equality,
+                                                                             bool inequality, bool finite_combined_bounds, bool active_ineq,
+                                                                             double weight_eq, double weight_ineq, double weight_bounds,
+                                                                             const Eigen::VectorXd* values, const Eigen::VectorXi* col_nnz)
+{
+    PRINT_ERROR_NAMED("Not yet implemented for the vertex based strategy");
+    OptimizationProblemInterface::computeCombinedSparseJacobian(jacobian, objective_lsq, equality, inequality, finite_combined_bounds, active_ineq,
+                                                                weight_eq, weight_ineq, weight_bounds, values, col_nnz);
+}
+
 void HyperGraphOptimizationProblemVertexBased::computeGradientObjectiveAndCombinedSparseJacobiansValues(Eigen::Ref<Eigen::VectorXd> gradient,
                                                                                                         Eigen::Ref<Eigen::VectorXd> jac_values,
                                                                                                         bool equality, bool inequality,

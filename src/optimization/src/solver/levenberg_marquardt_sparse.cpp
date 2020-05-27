@@ -60,7 +60,6 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
         _finite_bounds_dim = problem.finiteCombinedBoundsDimension();
         _val_dim           = _obj_dim + _eq_dim + _ineq_dim + _finite_bounds_dim;
         _param_dim         = problem.getParameterDimension();
-
         _values.resize(_val_dim);
 
         _delta.resize(_param_dim);
@@ -69,7 +68,7 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
         // initialize sparse jacobian
         // int count potential non-zeros of the Jacobian
         int nnz = problem.computeSparseJacobianLsqObjectiveNNZ() + problem.computeSparseJacobianEqualitiesNNZ() +
-                  problem.computeSparseHessianInequalitiesNNZ() + problem.computeSparseJacobianFiniteCombinedBoundsNNZ();
+                  problem.computeSparseJacobianInequalitiesNNZ() + problem.computeSparseJacobianFiniteCombinedBoundsNNZ();
 
         _jacobian.setZero();
         _jacobian.resize(_val_dim, _param_dim);
@@ -90,11 +89,11 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
     computeValues(problem);
 
     // compute jacobian
-    problem.computeCombinedSparseJacobian(_jacobian, true, true, true, true, true, _weight_eq, _weight_ineq, _weight_bounds);
+    problem.computeCombinedSparseJacobian(_jacobian, true, true, true, true, true, _weight_eq, _weight_ineq, _weight_bounds, &_values);
 
     // construct quasi-newton hessian approximation
-    // hessian.selfadjointView<Eigen::Upper>() = (_jacobian.transpose() * _jacobian).selfadjointView<Eigen::Upper>(); // just copy upper triangular
-    // part, but is the last cast necessary? it does not compile without it
+    // hessian.selfadjointView<Eigen::Upper>() = (_jacobian.transpose() * _jacobian).selfadjointView<Eigen::Upper>(); // just copy upper
+    // triangular part, but is the last cast necessary? it does not compile without it
     _hessian = _jacobian.transpose() * _jacobian;
 
     // construct right-hand-side of the approxiamted linear system
@@ -115,13 +114,15 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
 
     bool stop = (_rhs.lpNorm<Eigen::Infinity>() <= eps1);
 
-    double mu      = tau * _hessian.diagonal().maxCoeff();
+    double mu = tau * _hessian.diagonal().maxCoeff();
     if (mu < 0) mu = 0;
 
     double rho = 0;
 
+    bool analyze_pattern = new_structure;
+
     // get old chi2
-    double chi2_old           = _values.squaredNorm();
+    double chi2_old = _values.squaredNorm();
     if (obj_value) *obj_value = chi2_old;
 
     // start levenberg marquardt optimization loop
@@ -135,13 +136,14 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
             {
                 _hessian.coeffRef(i, i) += mu;
             }
-
             // solve linear system
-            if (new_structure)
+            if (analyze_pattern)
             {
                 // calc structural (non-zero) pattern only if graph (structure) was changed
                 _sparse_solver.analyzePattern(_hessian);
+                analyze_pattern = false;
             }
+
             _sparse_solver.factorize(_hessian);   // calculate factors with actual values
             _delta = _sparse_solver.solve(_rhs);  // solve linear system
 
@@ -179,7 +181,8 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
                         // computeValues(problem); // redundant
 
                         // calculate new jacobian
-                        problem.computeCombinedSparseJacobian(_jacobian, true, true, true, true, true, _weight_eq, _weight_ineq, _weight_bounds);
+                        problem.computeCombinedSparseJacobian(_jacobian, true, true, true, true, true, _weight_eq, _weight_ineq, _weight_bounds,
+                                                              &_values);
 
                         // get new hessian
                         _hessian = _jacobian.transpose() * _jacobian;
@@ -195,7 +198,7 @@ SolverStatus LevenbergMarquardtSparse::solve(OptimizationProblemInterface& probl
                         v = 2;
                     }
 
-                    chi2_old                  = chi2_new;
+                    chi2_old = chi2_new;
                     if (obj_value) *obj_value = chi2_old;
                 }
                 else
