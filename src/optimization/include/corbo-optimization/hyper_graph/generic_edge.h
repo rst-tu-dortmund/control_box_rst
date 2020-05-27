@@ -407,6 +407,45 @@ class BinaryVectorVertexEdge : public Edge<VectorVertex, VectorVertex>
     const T& _fun_obj;
 };
 
+template <typename T, void (T::*ComputeMethod)(int, const Eigen::Ref<const Eigen::VectorXd>&, double, Eigen::Ref<Eigen::VectorXd>) const>
+class BinaryVectorScalarVertexEdge : public Edge<VectorVertex, ScalarVertex>
+{
+ public:
+    using Ptr = std::shared_ptr<BinaryVectorScalarVertexEdge>;
+
+    explicit BinaryVectorScalarVertexEdge(int dim, int k, const T& fun_obj, VectorVertex& vertex1, ScalarVertex& vertex2, bool is_linear, bool is_lsq)
+        : Edge<VectorVertex, ScalarVertex>(vertex1, vertex2), _dimension(dim), _k(k), _is_linear(is_linear), _is_lsq(is_lsq), _fun_obj(fun_obj)
+    {
+    }
+
+    int getDimension() const override { return _dimension; }
+
+    // implements interface method
+    bool isLinear() const override { return _is_linear; }
+
+    // implements interface method
+    bool isLeastSquaresForm() const override { return _is_lsq; }
+
+    // implements interface method
+    bool providesJacobian() const override { return false; }
+
+    // implements interface method
+    void computeValues(Eigen::Ref<Eigen::VectorXd> values) override
+    {
+        const VectorVertex* vertex1 = static_cast<const VectorVertex*>(_vertices[0]);
+        const ScalarVertex* vertex2 = static_cast<const ScalarVertex*>(_vertices[1]);
+        (_fun_obj.*ComputeMethod)(_k, vertex1->values(), vertex2->value(), values);
+    }
+
+ private:
+    int _dimension  = 0;
+    int _k          = 0;
+    bool _is_linear = false;
+    bool _is_lsq    = false;
+
+    const T& _fun_obj;
+};
+
 template <typename T, void (T::*ComputeMethod)(int, const Eigen::Ref<const Eigen::VectorXd>&, const Eigen::Ref<const Eigen::VectorXd>&, double,
                                                Eigen::Ref<Eigen::VectorXd>) const>
 class TernaryVectorScalarVertexEdge : public Edge<VectorVertex, VectorVertex, ScalarVertex>

@@ -60,6 +60,7 @@ class StageFunction
     virtual int getNonIntegralControlTermDimension(int k) const { return 0; }
     virtual int getNonIntegralControlDeviationTermDimension(int k) const { return 0; }
     virtual int getNonIntegralDtTermDimension(int k) const { return 0; }
+    virtual int getNonIntegralStateDtTermDimension(int k) const { return 0; }
     virtual int getNonIntegralStateControlTermDimension(int k) const { return 0; }
     virtual int getNonIntegralStateControlDtTermDimension(int k) const { return 0; }
     virtual int getConcatenatedNonIntegralStateTermDimension(int k, bool lsq_mode = false) const;
@@ -90,10 +91,18 @@ class StageFunction
     {
     }
     virtual void computeNonIntegralDtTerm(int k, double dt, Eigen::Ref<Eigen::VectorXd> cost) const {}
+
+    //! computeNonIntegralStateDtTerm: warning: currently only supported for full discretization
+    virtual void computeNonIntegralStateDtTerm(int k, const Eigen::Ref<const Eigen::VectorXd>& x_k, double dt_k,
+                                               Eigen::Ref<Eigen::VectorXd> cost) const
+    {
+    }
+
     virtual void computeNonIntegralStateControlTerm(int k, const Eigen::Ref<const Eigen::VectorXd>& x_k, const Eigen::Ref<const Eigen::VectorXd>& u_k,
                                                     Eigen::Ref<Eigen::VectorXd> cost) const
     {
     }
+
     virtual void computeNonIntegralStateControlDtTerm(int k, const Eigen::Ref<const Eigen::VectorXd>& x_k,
                                                       const Eigen::Ref<const Eigen::VectorXd>& u_k, double dt_k,
                                                       Eigen::Ref<Eigen::VectorXd> cost) const

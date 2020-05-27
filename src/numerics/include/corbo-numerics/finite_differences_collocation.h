@@ -127,7 +127,7 @@ class ForwardDiffCollocation : public FiniteDifferencesCollocationInterface
                                    const SystemDynamicsInterface& system, Eigen::Ref<Eigen::VectorXd> error) override
     {
         assert(error.size() == x1.size());
-        assert(dt > 0 && "dt must be greater then zero!");
+        // assert(dt > 0 && "dt must be greater then zero!");
 
         system.dynamics(x1, u1, error);
         error -= (x2 - x1) / dt;

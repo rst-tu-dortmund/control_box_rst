@@ -97,6 +97,15 @@ void NlpFunctions::getNonIntegralStageFunctionEdges(int k, VectorVertex& xk, Vec
         edges.push_back(edge);
     }
 
+    dim = stage_fun.getNonIntegralDtTermDimension(k);
+    if (dim > 0)
+    {
+        using Edge = UnaryScalarVertexEdge<StageFunction, &StageFunction::computeNonIntegralDtTerm>;
+        Edge::Ptr edge =
+            std::make_shared<Edge>(dim, k, stage_fun, dt, stage_fun.isLinearNonIntegralDtTerm(k), stage_fun.isLsqFormNonIntegralDtTerm(k));
+        edges.push_back(edge);
+    }
+
     dim = stage_fun.getNonIntegralStateControlTermDimension(k);
     if (dim > 0)
     {
