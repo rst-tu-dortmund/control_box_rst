@@ -2,6 +2,14 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed issue: Wrong sparse Jacobian pattern in solver LM
+* Stage functions: added dedicated method for state and time dependency
+* Lsq form added to hybrid cost functions
+* Added missing header for eigenvalue computation
+* Contributors: Christoph Rösmann
+
 0.0.6 (2020-05-24)
 ------------------
 * Hybrid cost functions added: Minimum time and control/state quadratic form
