@@ -2,8 +2,8 @@
 Changelog for package control_box_rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.7 (2020-06-05)
+------------------
 * Fixed issue: Wrong sparse Jacobian pattern in solver LM
 * Stage functions: added dedicated method for state and time dependency
 * Lsq form added to hybrid cost functions
