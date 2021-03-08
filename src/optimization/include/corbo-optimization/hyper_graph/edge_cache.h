@@ -75,7 +75,7 @@ class EdgeCache
         PRINT_DEBUG_COND_ONCE(_jacobians.size() >= _values.capacity(),
                               "EdgeCache::pushJacobian(): cache capacity reached; you might better reserve more space in advance.");
 #if __cplusplus > 201402L
-        return _values.emplace_back();
+        return _jacobians.emplace_back();
 #else
         _jacobians.emplace_back(value_dim, param_dim);
         return _jacobians.back();
